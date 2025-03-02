@@ -1,12 +1,10 @@
 import json
 import os
 import sys
-from flask import jsonify
 import supervision as sv  # Includes ByteTrack implementation
 import matplotlib.pyplot as plt  # For plotting
 import numpy as np
 import ast
-
 
 CHUNK_LENGTH = 1800
 
@@ -18,8 +16,7 @@ def update(start_frame, coord_ids):
     :param start_frame: The frame index from which to start processing.
     :param coord_ids: A dictionary mapping 2D coordinate arrays (or string representations of them)
                       to an integer id.
-    :return: A tuple (frame_index, lost_ids, tracking_result) where tracking_result
-             is a Flask JSON response.
+    :return: A tuple (frame_index, lost_ids, tracking_result) where tracking_result is a JSON-like dict.
     """
     # Load original JSON from disk
     with open("radon.json", "r") as f:
@@ -88,7 +85,7 @@ def perform_tracking_from_json(input_data, start_frame, start_map):
     :param input_data: List of frame detection dictionaries.
     :param start_frame: The starting frame index.
     :param start_map: Mapping from start frame's object indices to an assigned id.
-    :return: A tuple (last_frame_index, lost_ids, tracking_result) where tracking_result is a JSON response.
+    :return: A tuple (last_frame_index, lost_ids, tracking_result) where tracking_result is a JSON-like dict.
     """
     # Initialize ByteTrack
     tracker = sv.ByteTrack(
@@ -235,10 +232,10 @@ def perform_tracking_from_json(input_data, start_frame, start_map):
 
         tracking_data.append(frame_tracking_data)
         if len(lost_array) > 0:
-            return frame_index, lost_array, jsonify(tracking_data)
+            return frame_index, lost_array, tracking_data
 
         current_active_count = sum(1 for track in active_tracks.values() if track["active"])
         active_track_counts.append((frame_index, current_active_count))
 
-    return frame_index, lost_array, jsonify(tracking_data)
+    return frame_index, lost_array, tracking_data
 
