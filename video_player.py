@@ -182,7 +182,7 @@ class VideoPlayer(QMainWindow):
 		self.duration = duration
 		
 		try:
-			self.fps = 30 if duration > 0 and duration < 10000 else 25
+			self.fps = 30 if duration > 0 and duration < 10000 else 60
 		except Exception:
 			self.fps = 30
 		

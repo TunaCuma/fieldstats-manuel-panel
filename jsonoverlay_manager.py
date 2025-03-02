@@ -64,15 +64,15 @@ class JSONOverlayManager:
         current_frame = self.player.current_frame 
         
         # Get objects for current frame
-        frame_objects = self.frame_data.get(self.player.current_frame, [])
+        frame_objects = self.frame_data.get(current_frame, [])
         
         # Update overlays
         for idx, overlay in enumerate(self.overlays):
             if idx < len(frame_objects):
                 obj = frame_objects[idx]
                 # Convert coordinates to view space
-                x = (obj['t_c'][0] + (347 if obj['src'] == 1  else 0 )) * self.scale_x
-                y = (300-obj['t_c'][1]) * self.scale_y
+                x = (obj['t_c'][0] + (347 if obj['src'] == 1  else 0 )-10) * self.scale_x
+                y = (obj['t_c'][1]-10) * self.scale_y
                 w = 20 * self.scale_x #(obj['bbox'][2] - obj['bbox'][0]) * self.scale_x
                 h = 20 * self.scale_y #(obj['bbox'][3] - obj['bbox'][1]) * self.scale_y
                 
