@@ -3,6 +3,8 @@ __pycache__
 
 **/*.mp4
 
+**/*.json
+
 **/*.webm
 
 **/*.avi
