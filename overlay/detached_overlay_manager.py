@@ -21,8 +21,8 @@ class DetachedOverlayManager:
         for _ in range(max_overlays):
             rect = CustomRectItem(0, 0, 0, 0)
             rect.setBrush(QBrush(Qt.GlobalColor.transparent))
-            green_pen = QPen(QColor("green"), 3)
-            rect.setPen(green_pen)
+            red_pen = QPen(QColor("red"), 3)
+            rect.setPen(red_pen)
             self.manager.detached_left_overlays.append(rect)
             self.manager.player.left_view.detached_window.scene.addItem(rect)
             rect.setVisible(False)

@@ -7,7 +7,7 @@ class LeftFieldView(VideoView):
     reattachRequested = pyqtSignal()
     
     def __init__(self):
-        super().__init__("Left Field", "green")
+        super().__init__("Left Field", "red")
     
     def emit_detach_request(self):
         """Signal to parent that this view needs to be detached"""

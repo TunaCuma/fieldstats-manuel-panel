@@ -36,8 +36,8 @@ class OverlayCreator:
             rect = CustomRectItem(0, 0, 0, 0)
             rect.setBrush(QBrush(Qt.GlobalColor.transparent))
             # Set the pen before any hover events occur
-            green_pen = QPen(QColor("green"), 3)
-            rect.setPen(green_pen)
+            red_pen = QPen(QColor("red"), 3)
+            rect.setPen(red_pen)
             self.manager.left_overlays.append(rect)
             self.manager.player.left_view.scene.addItem(rect)
             rect.setVisible(False)
