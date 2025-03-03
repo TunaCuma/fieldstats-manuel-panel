@@ -58,25 +58,31 @@ class JSONOverlayManager:
         for _ in range(max_overlays):
             rect = CustomRectItem(0, 0, 0, 0)
             rect.setBrush(QBrush(Qt.GlobalColor.transparent))
-            rect.setPen(QPen(QColor("orange"), 3))
+            # Set the pen before any hover events occur
+            orange_pen = QPen(QColor("orange"), 3)
+            rect.setPen(orange_pen)
             self.topdown_overlays.append(rect)
             self.player.scene.addItem(rect)
             rect.setVisible(False)
-        
+
         # Create overlays for left field view
         for _ in range(max_overlays):
             rect = CustomRectItem(0, 0, 0, 0)
             rect.setBrush(QBrush(Qt.GlobalColor.transparent))
-            rect.setPen(QPen(QColor("green"), 3))
+            # Set the pen before any hover events occur
+            green_pen = QPen(QColor("green"), 3)
+            rect.setPen(green_pen)
             self.left_overlays.append(rect)
             self.player.left_scene.addItem(rect)
             rect.setVisible(False)
-        
+
         # Create overlays for right field view
         for _ in range(max_overlays):
             rect = CustomRectItem(0, 0, 0, 0)
             rect.setBrush(QBrush(Qt.GlobalColor.transparent))
-            rect.setPen(QPen(QColor("blue"), 3))
+            # Set the pen before any hover events occur
+            blue_pen = QPen(QColor("blue"), 3)
+            rect.setPen(blue_pen)
             self.right_overlays.append(rect)
             self.player.right_scene.addItem(rect)
             rect.setVisible(False)
