@@ -1,17 +1,16 @@
 from PyQt6.QtWidgets import (
-    QWidget, QHBoxLayout, QVBoxLayout, QSlider, QPushButton,
-    QLabel, QLineEdit, QStyle, QGroupBox
+    QWidget, QHBoxLayout, QLabel, QPushButton,
+    QLineEdit, QStyle, QSlider
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 
 class VideoControls(QWidget):
-    """A widget providing video playback controls"""
+    """A widget providing streamlined video playback controls in a single row"""
     playPauseClicked = pyqtSignal()
     stopClicked = pyqtSignal()
     nextFrameClicked = pyqtSignal()
     prevFrameClicked = pyqtSignal()
     sliderMoved = pyqtSignal(int)
-    volumeChanged = pyqtSignal(int)
     goToFrameRequested = pyqtSignal(int)
     
     def __init__(self):
@@ -19,79 +18,60 @@ class VideoControls(QWidget):
         self.setupUI()
     
     def setupUI(self):
-        # Main layout
-        self.layout = QVBoxLayout(self)
+        # Single horizontal layout for all controls
+        self.layout = QHBoxLayout(self)
+        self.layout.setContentsMargins(5, 5, 5, 5)
         
-        # Frame information display
-        self.frame_info_group = QGroupBox("Frame Information")
-        self.frame_info_layout = QHBoxLayout(self.frame_info_group)
-        
+        # Frame information display - combined in one row
         self.current_frame_label = QLabel("Current Frame: 0")
         self.total_frames_label = QLabel("Total Frames: 0")
         self.fps_label = QLabel("FPS: 0")
         
-        self.frame_info_layout.addWidget(self.current_frame_label)
-        self.frame_info_layout.addWidget(self.total_frames_label)
-        self.frame_info_layout.addWidget(self.fps_label)
-        
-        self.layout.addWidget(self.frame_info_group)
-        
-        # Overlay information area
-        self.click_info_label = QLabel("Click on an overlay rectangle")
-        self.click_info_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.click_info_label.setStyleSheet("font-weight: bold; font-size: 14px; color: orange;")
-        self.layout.addWidget(self.click_info_label)
-        
-        # Frame navigation controls
-        self.frame_nav_group = QGroupBox("Frame Navigation")
-        self.frame_nav_layout = QHBoxLayout(self.frame_nav_group)
-        
-        self.frame_input_label = QLabel("Go to Frame:")
+        # Frame navigation - compacted in single row
+        self.frame_input_label = QLabel("Go to:")
         self.frame_input = QLineEdit()
-        self.frame_input.setFixedWidth(100)
+        self.frame_input.setFixedWidth(60)
         self.go_frame_btn = QPushButton("Go")
+        self.go_frame_btn.setFixedWidth(40)
         
-        self.frame_nav_layout.addWidget(self.frame_input_label)
-        self.frame_nav_layout.addWidget(self.frame_input)
-        self.frame_nav_layout.addWidget(self.go_frame_btn)
-        self.frame_nav_layout.addStretch()
-        
-        self.layout.addWidget(self.frame_nav_group)
-        
-        # Position slider
-        self.position_slider = QSlider(Qt.Orientation.Horizontal)
-        self.position_slider.setRange(0, 0)
-        self.layout.addWidget(self.position_slider)
-        
-        # Playback controls
-        self.controls_group = QGroupBox("Playback Controls")
-        self.controls_layout = QHBoxLayout(self.controls_group)
-        
+        # Playback controls - simplified
         self.play_btn = QPushButton()
         self.play_btn.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
+        self.play_btn.setFixedWidth(40)
         
         self.stop_btn = QPushButton()
         self.stop_btn.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaStop))
+        self.stop_btn.setFixedWidth(40)
         
-        self.prev_frame_btn = QPushButton("Previous Frame")
-        self.next_frame_btn = QPushButton("Next Frame")
+        self.prev_frame_btn = QPushButton()
+        self.prev_frame_btn.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaSkipBackward))
+        self.prev_frame_btn.setFixedWidth(40)
         
-        self.controls_layout.addWidget(self.play_btn)
-        self.controls_layout.addWidget(self.stop_btn)
-        self.controls_layout.addWidget(self.prev_frame_btn)
-        self.controls_layout.addWidget(self.next_frame_btn)
+        self.next_frame_btn = QPushButton()
+        self.next_frame_btn.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaSkipForward))
+        self.next_frame_btn.setFixedWidth(40)
         
-        # Volume control
-        self.volume_label = QLabel("Volume:")
-        self.volume_slider = QSlider(Qt.Orientation.Horizontal)
-        self.volume_slider.setRange(0, 100)
-        self.volume_slider.setValue(50)
-        self.volume_slider.setFixedWidth(100)
+        # Position slider - simplified
+        self.position_slider = QSlider(Qt.Orientation.Horizontal)
+        self.position_slider.setRange(0, 0)
         
-        self.controls_layout.addWidget(self.volume_label)
-        self.controls_layout.addWidget(self.volume_slider)
+        # Click info label
+        self.click_info_label = QLabel("Click on an overlay rectangle")
+        self.click_info_label.setStyleSheet("font-weight: bold; color: orange;")
         
-        self.layout.addWidget(self.controls_group)
+        # Add all widgets to the single row layout
+        self.layout.addWidget(self.current_frame_label)
+        self.layout.addWidget(self.total_frames_label)
+        self.layout.addWidget(self.fps_label)
+        self.layout.addWidget(self.position_slider, 1)  # Give slider more space
+        self.layout.addWidget(self.prev_frame_btn)
+        self.layout.addWidget(self.play_btn)
+        self.layout.addWidget(self.stop_btn)
+        self.layout.addWidget(self.next_frame_btn)
+        self.layout.addWidget(self.frame_input_label)
+        self.layout.addWidget(self.frame_input)
+        self.layout.addWidget(self.go_frame_btn)
+        self.layout.addWidget(self.click_info_label)
         
         # Connect signals
         self.position_slider.sliderMoved.connect(self.sliderMoved.emit)
@@ -99,7 +79,6 @@ class VideoControls(QWidget):
         self.stop_btn.clicked.connect(self.stopClicked.emit)
         self.prev_frame_btn.clicked.connect(self.prevFrameClicked.emit)
         self.next_frame_btn.clicked.connect(self.nextFrameClicked.emit)
-        self.volume_slider.valueChanged.connect(self.volumeChanged.emit)
         self.frame_input.returnPressed.connect(self.go_to_frame)
         self.go_frame_btn.clicked.connect(self.go_to_frame)
     

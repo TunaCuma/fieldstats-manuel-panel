@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QFileDialog, 
     QLabel, QMessageBox, QStatusBar, QMenuBar, QMenu, QDialog, QHBoxLayout, QCheckBox, QPushButton
 )
-from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
+from PyQt6.QtMultimedia import QMediaPlayer 
 from PyQt6.QtCore import Qt, QUrl, QTimer, pyqtSignal
 from PyQt6.QtGui import QAction
 
@@ -60,18 +60,12 @@ class VideoPlayer(QMainWindow):
         
         # Setup media players
         self.media_player = QMediaPlayer()
-        self.audio_output = QAudioOutput()
-        self.media_player.setAudioOutput(self.audio_output)
         self.media_player.setVideoOutput(self.transform_view.video_item)
         
         self.left_player = QMediaPlayer()
-        self.left_audio = QAudioOutput()
-        self.left_player.setAudioOutput(self.left_audio)
         self.left_player.setVideoOutput(self.left_view.video_item)
         
         self.right_player = QMediaPlayer()
-        self.right_audio = QAudioOutput()
-        self.right_player.setAudioOutput(self.right_audio)
         self.right_player.setVideoOutput(self.right_view.video_item)
         
         # Setup synchronizer
@@ -79,11 +73,6 @@ class VideoPlayer(QMainWindow):
         self.synchronizer.add_player(self.media_player, is_primary=True)
         self.synchronizer.add_player(self.left_player)
         self.synchronizer.add_player(self.right_player)
-        
-        # Mute side videos by default, keep only main audio
-        self.left_audio.setMuted(True)
-        self.right_audio.setMuted(True)
-        self.audio_output.setVolume(0.5)  # Set initial volume
         
         # Playback and frame state variables
         self.total_frames = 0
@@ -115,7 +104,6 @@ class VideoPlayer(QMainWindow):
         self.controls.prevFrameClicked.connect(self.previous_frame)
         self.controls.nextFrameClicked.connect(self.next_frame)
         self.controls.sliderMoved.connect(self.set_position)
-        self.controls.volumeChanged.connect(self.set_volume)
         self.controls.goToFrameRequested.connect(self.go_to_frame)
         
         # Connect media player signals
@@ -227,10 +215,6 @@ class VideoPlayer(QMainWindow):
     def set_position(self, position):
         """Set position for all videos"""
         self.synchronizer.set_position(position)
-    
-    def set_volume(self, volume):
-        """Set volume for main video"""
-        self.audio_output.setVolume(volume / 100.0)
     
     def duration_changed(self, duration):
         """Handle duration change event"""
