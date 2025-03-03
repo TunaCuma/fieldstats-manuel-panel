@@ -10,6 +10,8 @@ class VideoView(QWidget):
     """A self-contained widget for displaying a video with controls"""
     videoResized = pyqtSignal()
     toggledVisibility = pyqtSignal(bool)
+    detachRequested = pyqtSignal()
+    reattachRequested = pyqtSignal()
     
     def __init__(self, title, color="white"):
         super().__init__()
@@ -121,12 +123,14 @@ class VideoView(QWidget):
             self.status_label.setText("")
             # Restore expanded size policy
             self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+            self.setMinimumSize(100, 100)  # Restore minimum size
         else:
             self.hide_btn.setText("＋")  # Unicode for plus
             self.hide_btn.setToolTip("Show panel")
             self.status_label.setText("[Hidden]")
             # Collapse size when hidden
-            self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+            self.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Minimum)
+            self.setMinimumSize(0, self.header.height())  # Only header height needed
         
         # Emit signal for parent containers to adjust
         self.toggledVisibility.emit(self.is_visible)
@@ -143,20 +147,19 @@ class VideoView(QWidget):
             self.detached_window = DetachedVideoWindow(self.title, self)
             self.detached_window.closed.connect(self.reattach_view)
             
-            # Hide this view while it's detached
+            # Hide content but keep header
             self.content_container.setVisible(False)
             self.pop_out_btn.setEnabled(False)
             
+            # Set minimal size to just the header
+            self.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Minimum)
+            self.setMinimumSize(0, self.header.height())
+            
             # We need to access the video player that this view belongs to
             # This signal will be caught by the parent VideoPlayer
-            self.emit_detach_request()
+            self.detachRequested.emit()
             
             self.detached_window.show()
-    
-    def emit_detach_request(self):
-        """Signal to parent that this view needs to be detached"""
-        # This will be implemented by subclasses to emit the appropriate signal
-        pass
     
     def set_detached_video_output(self, media_player):
         """Set the detached window's video item as output for the media player"""
@@ -166,17 +169,18 @@ class VideoView(QWidget):
     def reattach_view(self):
         """Reattach the video view after the detached window is closed"""
         self.detached_window = None
+        
+        # Restore view visibility if it was visible before
         if self.is_visible:
             self.content_container.setVisible(True)
+            # Restore size policy
+            self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+            self.setMinimumSize(100, 100)
+        
         self.pop_out_btn.setEnabled(True)
         
         # Signal that we need to restore the video output
-        self.emit_reattach_request()
-    
-    def emit_reattach_request(self):
-        """Signal to parent that this view needs to be reattached"""
-        # This will be implemented by subclasses to emit the appropriate signal
-        pass
+        self.reattachRequested.emit()
     
     def resizeEvent(self, event):
         """Handle resize events to maintain proper video scaling"""

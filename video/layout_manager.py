@@ -33,7 +33,16 @@ class LayoutManager(QWidget):
         # Create main vertical splitter
         self.main_splitter = QSplitter(Qt.Orientation.Vertical)
         self.main_splitter.setContentsMargins(0, 0, 0, 0)
-        self.main_splitter.setHandleWidth(1)  # Smaller handle
+        self.main_splitter.setHandleWidth(5)  # Increased handle thickness
+        self.main_splitter.setStyleSheet("""
+            QSplitter::handle {
+                background-color: #cccccc;
+                border: 1px solid #999999;
+            }
+            QSplitter::handle:hover {
+                background-color: #aaaaaa;
+            }
+        """)
         
         # Top container for left and right field videos
         self.top_container = QWidget()
@@ -44,7 +53,16 @@ class LayoutManager(QWidget):
         # Create horizontal splitter for left and right views
         self.horizontal_splitter = QSplitter(Qt.Orientation.Horizontal)
         self.horizontal_splitter.setContentsMargins(0, 0, 0, 0)
-        self.horizontal_splitter.setHandleWidth(1)  # Smaller handle
+        self.horizontal_splitter.setHandleWidth(5)  # Increased handle thickness
+        self.horizontal_splitter.setStyleSheet("""
+            QSplitter::handle {
+                background-color: #cccccc;
+                border: 1px solid #999999;
+            }
+            QSplitter::handle:hover {
+                background-color: #aaaaaa;
+            }
+        """)
         self.top_layout.addWidget(self.horizontal_splitter)
         
         # Add the top container to the main splitter
@@ -88,6 +106,8 @@ class LayoutManager(QWidget):
         """Add view to the left side of the horizontal splitter"""
         self.horizontal_splitter.addWidget(view)
         view.toggledVisibility.connect(lambda visible: self.handle_view_visibility('left', visible))
+        view.detachRequested.connect(lambda: self.handle_view_detach('left'))
+        view.reattachRequested.connect(lambda: self.handle_view_reattach('left'))
         self.views['left']['view'] = view
         self.views['left']['container'] = self.horizontal_splitter
         
@@ -95,6 +115,8 @@ class LayoutManager(QWidget):
         """Add view to the right side of the horizontal splitter"""
         self.horizontal_splitter.addWidget(view)
         view.toggledVisibility.connect(lambda visible: self.handle_view_visibility('right', visible))
+        view.detachRequested.connect(lambda: self.handle_view_detach('right'))
+        view.reattachRequested.connect(lambda: self.handle_view_reattach('right'))
         self.views['right']['view'] = view
         self.views['right']['container'] = self.horizontal_splitter
         
@@ -105,13 +127,81 @@ class LayoutManager(QWidget):
         """Add view to the bottom container"""
         self.bottom_layout.addWidget(view)
         view.toggledVisibility.connect(lambda visible: self.handle_view_visibility('transform', visible))
+        view.detachRequested.connect(lambda: self.handle_view_detach('transform'))
+        view.reattachRequested.connect(lambda: self.handle_view_reattach('transform'))
         self.views['transform']['view'] = view
         self.views['transform']['container'] = self.bottom_container
+    
+    def handle_view_detach(self, view_name):
+        """Handle when a view is detached to separate window"""
+        # Update our internal tracking
+        view = self.views[view_name]['view']
+        
+        # Handle horizontal splitter adjustments (left and right views)
+        if view_name in ['left', 'right']:
+            # Save current sizes before detaching
+            if self.views['left']['visible'] and self.views['right']['visible']:
+                self.last_horizontal_sizes = self.horizontal_splitter.sizes()
+            
+            # Get the indexes of the views in the splitter
+            left_idx = self.horizontal_splitter.indexOf(self.views['left']['view'])
+            right_idx = self.horizontal_splitter.indexOf(self.views['right']['view'])
+            
+            # When detaching left view
+            if view_name == 'left' and self.views['right']['visible']:
+                # Get the total width before changing
+                total_width = sum(self.horizontal_splitter.sizes())
+                # Create new sizes list with 0 for detached view
+                new_sizes = [0] * self.horizontal_splitter.count()
+                new_sizes[right_idx] = total_width
+                self.horizontal_splitter.setSizes(new_sizes)
+                
+            # When detaching right view
+            elif view_name == 'right' and self.views['left']['visible']:
+                # Get the total width before changing
+                total_width = sum(self.horizontal_splitter.sizes())
+                # Create new sizes list with 0 for detached view
+                new_sizes = [0] * self.horizontal_splitter.count()
+                new_sizes[left_idx] = total_width
+                self.horizontal_splitter.setSizes(new_sizes)
+                
+        # Handle vertical splitter for transform view
+        elif view_name == 'transform':
+            # Save current sizes
+            self.last_vertical_sizes = self.main_splitter.sizes()
+            
+            # Get the indexes of the containers in the main splitter
+            top_idx = self.main_splitter.indexOf(self.top_container)
+            bottom_idx = self.main_splitter.indexOf(self.bottom_container)
+            
+            # Get the total height
+            total_height = sum(self.main_splitter.sizes())
+            
+            # Create new sizes list with a minimal size for the detached section
+            new_sizes = [0] * self.main_splitter.count()
+            new_sizes[top_idx] = total_height - 30
+            new_sizes[bottom_idx] = 30  # Just enough for the splitter handle
+            self.main_splitter.setSizes(new_sizes)
+        
+        # Emit signal for parent to handle resizing
+        self.viewResized.emit()
+    
+    def handle_view_reattach(self, view_name):
+        """Handle when a view is reattached from separate window"""
+        # Restore the view
+        if view_name in ['left', 'right'] and self.views['left']['visible'] and self.views['right']['visible'] and self.last_horizontal_sizes:
+            self.horizontal_splitter.setSizes(self.last_horizontal_sizes)
+        elif view_name == 'transform' and self.last_vertical_sizes:
+            self.main_splitter.setSizes(self.last_vertical_sizes)
+        
+        # Emit signal for parent to handle resizing
+        self.viewResized.emit()
         
     def handle_view_visibility(self, view_name, is_visible):
         """Respond to view visibility changes and adjust layout"""
         # Update visibility state
         self.views[view_name]['visible'] = is_visible
+        view = self.views[view_name]['view']
         
         # Handle horizontal splitter adjustments (left and right views)
         if view_name in ['left', 'right']:
@@ -121,12 +211,28 @@ class LayoutManager(QWidget):
             
             # If hiding one view, give all space to the other view
             if not is_visible:
+                # First get the indexes of the views in the splitter
+                left_idx = self.horizontal_splitter.indexOf(self.views['left']['view'])
+                right_idx = self.horizontal_splitter.indexOf(self.views['right']['view'])
+                
+                # When hiding left view
                 if view_name == 'left' and self.views['right']['visible']:
-                    # Right view gets all space
-                    self.horizontal_splitter.setSizes([0, 1])
+                    # Get the total width before changing
+                    total_width = sum(self.horizontal_splitter.sizes())
+                    # Create new sizes list with 0 for hidden view
+                    new_sizes = [0] * self.horizontal_splitter.count()
+                    new_sizes[right_idx] = total_width
+                    self.horizontal_splitter.setSizes(new_sizes)
+                    
+                # When hiding right view
                 elif view_name == 'right' and self.views['left']['visible']:
-                    # Left view gets all space
-                    self.horizontal_splitter.setSizes([1, 0])
+                    # Get the total width before changing
+                    total_width = sum(self.horizontal_splitter.sizes())
+                    # Create new sizes list with 0 for hidden view
+                    new_sizes = [0] * self.horizontal_splitter.count()
+                    new_sizes[left_idx] = total_width
+                    self.horizontal_splitter.setSizes(new_sizes)
+                    
             # If unhiding a view and both are now visible, restore original proportions
             elif is_visible and self.views['left']['visible'] and self.views['right']['visible'] and self.last_horizontal_sizes:
                 self.horizontal_splitter.setSizes(self.last_horizontal_sizes)
@@ -139,10 +245,34 @@ class LayoutManager(QWidget):
         
         # If both top views are hidden, give all space to bottom
         if all(not self.views[v]['visible'] for v in ['left', 'right']) and self.views['transform']['visible']:
-            self.main_splitter.setSizes([0, 1])
+            # Get the indexes of the containers in the main splitter
+            top_idx = self.main_splitter.indexOf(self.top_container)
+            bottom_idx = self.main_splitter.indexOf(self.bottom_container)
+            
+            # Get the total height
+            total_height = sum(self.main_splitter.sizes())
+            
+            # Create new sizes list with a minimal size for the hidden section
+            new_sizes = [0] * self.main_splitter.count()
+            new_sizes[top_idx] = 30  # Just enough for the splitter handle
+            new_sizes[bottom_idx] = total_height - 30
+            self.main_splitter.setSizes(new_sizes)
+            
         # If bottom view is hidden, give all space to top
         elif not self.views['transform']['visible'] and any(self.views[v]['visible'] for v in ['left', 'right']):
-            self.main_splitter.setSizes([1, 0])
+            # Get the indexes of the containers in the main splitter
+            top_idx = self.main_splitter.indexOf(self.top_container)
+            bottom_idx = self.main_splitter.indexOf(self.bottom_container)
+            
+            # Get the total height
+            total_height = sum(self.main_splitter.sizes())
+            
+            # Create new sizes list with a minimal size for the hidden section
+            new_sizes = [0] * self.main_splitter.count()
+            new_sizes[top_idx] = total_height - 30
+            new_sizes[bottom_idx] = 30  # Just enough for the splitter handle
+            self.main_splitter.setSizes(new_sizes)
+            
         # If everything is visible again, restore original proportions
         elif any(self.views[v]['visible'] for v in ['left', 'right']) and self.views['transform']['visible'] and self.last_vertical_sizes:
             self.main_splitter.setSizes(self.last_vertical_sizes)
@@ -199,6 +329,17 @@ class LayoutManager(QWidget):
     
     def apply_layout_preset(self, preset):
         """Apply a layout preset"""
+        # First ensure containers have no maximum height constraints
+        self.top_container.setMaximumHeight(16777215)  # Qt's QWIDGETSIZE_MAX
+        self.bottom_container.setMaximumHeight(16777215)  # Qt's QWIDGETSIZE_MAX
+        
+        # Make sure views are shown if they were hidden
+        for view_name in ['left', 'right', 'transform']:
+            view = self.views[view_name]['view']
+            if not self.views[view_name]['visible']:
+                # Show the view
+                view.set_visible(True)  # This will call toggle_visibility if needed
+        
         if preset == "equal":
             # Equal split between top and bottom
             self.main_splitter.setSizes([500, 500])
