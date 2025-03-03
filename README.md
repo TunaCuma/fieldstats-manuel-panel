@@ -2,6 +2,24 @@
 
 A specialized video player application built with PyQt6 for analyzing football footage with YOLO detection overlays. This application synchronizes three video views (left field, right field, and top-down transformed view) and displays bounding box overlays from YOLO detection data.
 
+## TODO
+
+### json overlay
+
+- [ ] hover bug on left field and right field videos
+
+### video player
+
+- [ ] video dynamic resize
+- [ ] hide video
+- [ ] take video to another window
+- [ ] remove sound
+
+### tracking
+
+- [ ] bytetrack functionalities
+- [ ] ??
+
 ## Features
 
 - Three synchronized video views:
