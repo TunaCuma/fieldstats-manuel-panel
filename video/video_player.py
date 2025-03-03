@@ -126,6 +126,22 @@ class VideoPlayer(QMainWindow):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_ui)
         self.timer.start(100)
+        
+        self.media_player.mediaStatusChanged.connect(self.update_video_sizes)
+        self.left_player.mediaStatusChanged.connect(self.update_video_sizes)
+        self.right_player.mediaStatusChanged.connect(self.update_video_sizes)
+
+    def update_video_sizes(self, status):
+        """Update all video sizes when media status changes"""
+        # Check if the media is loaded and ready
+        if status in [QMediaPlayer.MediaStatus.LoadedMedia, QMediaPlayer.MediaStatus.BufferedMedia]:
+            # Force update of all video sizes
+            self.left_view.update_video_size()
+            self.right_view.update_video_size()
+            self.transform_view.update_video_size()
+            
+            # Emit signal for overlay adjustments
+            self.viewResized.emit()
     
     def setup_menu(self):
         """Set up the menu bar"""
