@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QGraphicsScene, QGraphicsView
+from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QGraphicsScene, QGraphicsView, QLabel, QFrame
 from PyQt6.QtMultimediaWidgets import QGraphicsVideoItem
 from PyQt6.QtCore import Qt, QSizeF, pyqtSignal
 
@@ -17,13 +17,23 @@ class DetachedVideoWindow(QMainWindow):
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
         self.layout = QVBoxLayout(self.central_widget)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(0)
+        
+        # Title label
+        self.title_label = QLabel(title)
+        self.title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.title_label.setStyleSheet("font-weight: bold; color: orange; font-size: 14px;")
+        self.layout.addWidget(self.title_label)
         
         # Graphics scene and view
         self.scene = QGraphicsScene()
         self.view = QGraphicsView(self.scene)
-        self.view.setStyleSheet("background-color: black;")
+        self.view.setStyleSheet("background-color: black; padding: 0px; margin: 0px;")
         self.view.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.view.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.view.setContentsMargins(0, 0, 0, 0)
+        self.view.setFrameShape(QFrame.Shape.NoFrame)  # Remove frame
         
         # Video item
         self.video_item = QGraphicsVideoItem()
@@ -65,6 +75,11 @@ class DetachedVideoWindow(QMainWindow):
         else:
             # No valid video size, use view size
             self.video_item.setSize(QSizeF(view_size.width(), view_size.height()))
+        
+        # Signal that overlays need to be updated
+        if self.parent_view and hasattr(self.parent_view, "parent"):
+            if hasattr(self.parent_view.parent(), "viewResized"):
+                self.parent_view.parent().viewResized.emit()
     
     def closeEvent(self, event):
         """Handle window close event to notify parent"""

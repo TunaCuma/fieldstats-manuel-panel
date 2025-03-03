@@ -7,7 +7,7 @@ from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PyQt6.QtCore import Qt, QUrl, QTimer, pyqtSignal
 from PyQt6.QtGui import QAction
 
-from video_view import VideoView
+from video_view_subclasses import LeftFieldView, RightFieldView, TransformView
 from video_controls import VideoControls
 from layout_manager import LayoutManager
 from media_synchronizer import MediaSynchronizer
@@ -32,14 +32,24 @@ class VideoPlayer(QMainWindow):
         self.main_layout.addWidget(self.layout_manager)
         
         # Create video views
-        self.left_view = VideoView("Left Field", "green")
-        self.right_view = VideoView("Right Field", "blue")
-        self.transform_view = VideoView("Transformed View", "orange")
+        self.left_view = LeftFieldView()
+        self.right_view = RightFieldView()
+        self.transform_view = TransformView()
         
         # Add views to layout manager
         self.layout_manager.add_left_view(self.left_view)
         self.layout_manager.add_right_view(self.right_view)
         self.layout_manager.add_transform_view(self.transform_view)
+        
+        # Connect detach signals
+        self.left_view.detachRequested.connect(self.handle_left_detach)
+        self.right_view.detachRequested.connect(self.handle_right_detach)
+        self.transform_view.detachRequested.connect(self.handle_transform_detach)
+        
+        # Connect reattach signals
+        self.left_view.reattachRequested.connect(self.handle_left_reattach)
+        self.right_view.reattachRequested.connect(self.handle_right_reattach)
+        self.transform_view.reattachRequested.connect(self.handle_transform_reattach)
         
         # Create controls
         self.controls = VideoControls()
@@ -308,6 +318,39 @@ class VideoPlayer(QMainWindow):
         
         # Emit signal for overlay adjustments
         self.viewResized.emit()
+    
+    def handle_left_detach(self):
+        """Handle left view detach request"""
+        if self.left_view.detached_window:
+            self.left_view.set_detached_video_output(self.left_player)
+            self.statusBar.showMessage("Left field view detached to separate window")
+    
+    def handle_right_detach(self):
+        """Handle right view detach request"""
+        if self.right_view.detached_window:
+            self.right_view.set_detached_video_output(self.right_player)
+            self.statusBar.showMessage("Right field view detached to separate window")
+    
+    def handle_transform_detach(self):
+        """Handle transform view detach request"""
+        if self.transform_view.detached_window:
+            self.transform_view.set_detached_video_output(self.media_player)
+            self.statusBar.showMessage("Transform view detached to separate window")
+    
+    def handle_left_reattach(self):
+        """Handle left view reattach request"""
+        self.left_player.setVideoOutput(self.left_view.video_item)
+        self.statusBar.showMessage("Left field view reattached")
+    
+    def handle_right_reattach(self):
+        """Handle right view reattach request"""
+        self.right_player.setVideoOutput(self.right_view.video_item)
+        self.statusBar.showMessage("Right field view reattached")
+    
+    def handle_transform_reattach(self):
+        """Handle transform view reattach request"""
+        self.media_player.setVideoOutput(self.transform_view.video_item)
+        self.statusBar.showMessage("Transform view reattached")
     
     def handle_left_visibility(self, is_visible):
         """Handle left view visibility changes"""

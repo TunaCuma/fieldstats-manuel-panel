@@ -20,6 +20,8 @@ class LayoutManager(QWidget):
         
         # Create main vertical splitter
         self.main_splitter = QSplitter(Qt.Orientation.Vertical)
+        self.main_splitter.setContentsMargins(0, 0, 0, 0)
+        self.main_splitter.setHandleWidth(1)  # Smaller handle
         
         # Top container for left and right field videos
         self.top_container = QWidget()
@@ -29,6 +31,8 @@ class LayoutManager(QWidget):
         
         # Create horizontal splitter for left and right views
         self.horizontal_splitter = QSplitter(Qt.Orientation.Horizontal)
+        self.horizontal_splitter.setContentsMargins(0, 0, 0, 0)
+        self.horizontal_splitter.setHandleWidth(1)  # Smaller handle
         self.top_layout.addWidget(self.horizontal_splitter)
         
         # Add the top container to the main splitter

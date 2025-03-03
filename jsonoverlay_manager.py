@@ -9,6 +9,9 @@ class JSONOverlayManager:
         self.topdown_overlays = []  # For transformed view (bottom)
         self.left_overlays = []     # For left field view
         self.right_overlays = []    # For right field view
+        self.detached_topdown_overlays = []  # For detached transformed view
+        self.detached_left_overlays = []     # For detached left field view
+        self.detached_right_overlays = []    # For detached right field view
         self.frame_data = {}
         
         # Default dimensions - will be updated from metadata if available
@@ -88,6 +91,16 @@ class JSONOverlayManager:
         self.player.viewResized.connect(self.update_view_sizes)
         self.player.media_player.positionChanged.connect(self.update_overlays)
         self.player.viewResized.connect(self.update_all_overlays)
+        
+        # Connect signals for detached windows
+        self.player.left_view.detachRequested.connect(self.create_detached_left_overlays)
+        self.player.right_view.detachRequested.connect(self.create_detached_right_overlays)
+        self.player.transform_view.detachRequested.connect(self.create_detached_transform_overlays)
+        
+        # Connect signals for reattaching
+        self.player.left_view.reattachRequested.connect(self.clean_detached_left_overlays)
+        self.player.right_view.reattachRequested.connect(self.clean_detached_right_overlays)
+        self.player.transform_view.reattachRequested.connect(self.clean_detached_transform_overlays)
     
     def update_view_sizes(self):
         """Update scaling factors based on the actual video item sizes rather than view sizes"""
@@ -154,11 +167,33 @@ class JSONOverlayManager:
                 right_objects.append(obj)
         
         # Update topdown view overlays (using t_c coordinates)
+        self.update_topdown_overlays(transformed_objects)
+        
+        # Update left field overlays (using bbox coordinates)
+        self.update_left_overlays(left_objects)
+        
+        # Update right field overlays (using bbox coordinates)
+        self.update_right_overlays(right_objects)
+        
+        # Update detached window overlays if they exist
+        if self.player.transform_view.detached_window and self.detached_topdown_overlays:
+            self.update_detached_topdown_overlays(transformed_objects)
+            
+        if self.player.left_view.detached_window and self.detached_left_overlays:
+            self.update_detached_left_overlays(left_objects)
+            
+        if self.player.right_view.detached_window and self.detached_right_overlays:
+            self.update_detached_right_overlays(right_objects)
+    
+    def update_topdown_overlays(self, transformed_objects):
+        """Update overlays for the main transform view"""
         for idx, overlay in enumerate(self.topdown_overlays):
             if idx < len(transformed_objects):
                 obj = transformed_objects[idx]
+                
                 # Use transformed center coordinates
-                # Account for video item position offset due to aspect ratio scaling
+                # Get the direct video item position 
+                video_rect = self.player.transform_view.video_item.boundingRect()
                 x_offset = self.player.transform_view.video_item.pos().x()
                 y_offset = self.player.transform_view.video_item.pos().y()
                 
@@ -167,6 +202,7 @@ class JSONOverlayManager:
                 if obj['src'] == 1:
                     x_position += self.topdown_width / 2 - 20  # Adjust by 20 pixels to fix positioning
                 
+                # Position in the middle of the object with correct scaling
                 x = x_offset + (x_position - 10) * self.topdown_scale_x
                 y = y_offset + (obj['t_c'][1] - 10) * self.topdown_scale_y
                 w = 20 * self.topdown_scale_x
@@ -180,16 +216,19 @@ class JSONOverlayManager:
                 overlay.setClickCallback(lambda info=obj_info: self.show_object_info(info))
             else:
                 overlay.setVisible(False)
-        
-        # Update left field overlays (using bbox coordinates)
+    
+    def update_left_overlays(self, left_objects):
+        """Update overlays for the main left field view"""
         for idx, overlay in enumerate(self.left_overlays):
             if idx < len(left_objects) and self.player.is_left_visible:
                 obj = left_objects[idx]
-                # Use bounding box coordinates
-                # Account for video item position offset due to aspect ratio scaling
+                
+                # Get the direct video item position
+                video_rect = self.player.left_view.video_item.boundingRect()
                 x_offset = self.player.left_view.video_item.pos().x()
                 y_offset = self.player.left_view.video_item.pos().y()
                 
+                # Calculate rectangle position and size
                 x = x_offset + obj['bbox'][0] * self.left_scale_x
                 y = y_offset + obj['bbox'][1] * self.left_scale_y
                 w = (obj['bbox'][2] - obj['bbox'][0]) * self.left_scale_x
@@ -203,20 +242,223 @@ class JSONOverlayManager:
                 overlay.setClickCallback(lambda info=obj_info: self.show_object_info(info))
             else:
                 overlay.setVisible(False)
-        
-        # Update right field overlays (using bbox coordinates)
+    
+    def update_right_overlays(self, right_objects):
+        """Update overlays for the main right field view"""
         for idx, overlay in enumerate(self.right_overlays):
             if idx < len(right_objects) and self.player.is_right_visible:
                 obj = right_objects[idx]
-                # Use bounding box coordinates
-                # Account for video item position offset due to aspect ratio scaling
+                
+                # Get the direct video item position
+                video_rect = self.player.right_view.video_item.boundingRect()
                 x_offset = self.player.right_view.video_item.pos().x()
                 y_offset = self.player.right_view.video_item.pos().y()
                 
+                # Calculate rectangle position and size
                 x = x_offset + obj['bbox'][0] * self.right_scale_x
                 y = y_offset + obj['bbox'][1] * self.right_scale_y
                 w = (obj['bbox'][2] - obj['bbox'][0]) * self.right_scale_x
                 h = (obj['bbox'][3] - obj['bbox'][1]) * self.right_scale_y
+                
+                overlay.setRect(QRectF(x, y, w, h))
+                overlay.setVisible(True)
+                
+                # Setup click callback
+                obj_info = obj.copy()
+                overlay.setClickCallback(lambda info=obj_info: self.show_object_info(info))
+            else:
+                overlay.setVisible(False)
+    
+    def create_detached_left_overlays(self):
+        """Create overlays for detached left field view"""
+        if not self.player.left_view.detached_window:
+            return
+            
+        # Clean any existing overlays
+        self.clean_detached_left_overlays()
+        
+        # Create new overlays
+        max_overlays = 30
+        for _ in range(max_overlays):
+            rect = CustomRectItem(0, 0, 0, 0)
+            rect.setBrush(QBrush(Qt.GlobalColor.transparent))
+            green_pen = QPen(QColor("green"), 3)
+            rect.setPen(green_pen)
+            self.detached_left_overlays.append(rect)
+            self.player.left_view.detached_window.scene.addItem(rect)
+            rect.setVisible(False)
+    
+    def create_detached_right_overlays(self):
+        """Create overlays for detached right field view"""
+        if not self.player.right_view.detached_window:
+            return
+            
+        # Clean any existing overlays
+        self.clean_detached_right_overlays()
+        
+        # Create new overlays
+        max_overlays = 30
+        for _ in range(max_overlays):
+            rect = CustomRectItem(0, 0, 0, 0)
+            rect.setBrush(QBrush(Qt.GlobalColor.transparent))
+            blue_pen = QPen(QColor("blue"), 3)
+            rect.setPen(blue_pen)
+            self.detached_right_overlays.append(rect)
+            self.player.right_view.detached_window.scene.addItem(rect)
+            rect.setVisible(False)
+    
+    def create_detached_transform_overlays(self):
+        """Create overlays for detached transform view"""
+        if not self.player.transform_view.detached_window:
+            return
+            
+        # Clean any existing overlays
+        self.clean_detached_transform_overlays()
+        
+        # Create new overlays
+        max_overlays = 30
+        for _ in range(max_overlays):
+            rect = CustomRectItem(0, 0, 0, 0)
+            rect.setBrush(QBrush(Qt.GlobalColor.transparent))
+            orange_pen = QPen(QColor("orange"), 3)
+            rect.setPen(orange_pen)
+            self.detached_topdown_overlays.append(rect)
+            self.player.transform_view.detached_window.scene.addItem(rect)
+            rect.setVisible(False)
+    
+    def clean_detached_left_overlays(self):
+        """Clean overlays from detached left field view"""
+        for rect in self.detached_left_overlays:
+            if rect.scene():
+                rect.scene().removeItem(rect)
+        self.detached_left_overlays.clear()
+    
+    def clean_detached_right_overlays(self):
+        """Clean overlays from detached right field view"""
+        for rect in self.detached_right_overlays:
+            if rect.scene():
+                rect.scene().removeItem(rect)
+        self.detached_right_overlays.clear()
+    
+    def clean_detached_transform_overlays(self):
+        """Clean overlays from detached transform view"""
+        for rect in self.detached_topdown_overlays:
+            if rect.scene():
+                rect.scene().removeItem(rect)
+        self.detached_topdown_overlays.clear()
+    
+    def update_detached_topdown_overlays(self, transformed_objects):
+        """Update overlays for the detached transform view"""
+        detached_window = self.player.transform_view.detached_window
+        if not detached_window:
+            return
+            
+        # Calculate scale factors for detached window
+        video_size = detached_window.video_item.size()
+        if video_size.width() > 0:
+            scale_x = video_size.width() / self.topdown_width
+            scale_y = video_size.height() / self.topdown_height
+        else:
+            scale_x = self.topdown_scale_x
+            scale_y = self.topdown_scale_y
+            
+        for idx, overlay in enumerate(self.detached_topdown_overlays):
+            if idx < len(transformed_objects):
+                obj = transformed_objects[idx]
+                
+                # Get video item position
+                video_rect = detached_window.video_item.boundingRect()
+                x_offset = detached_window.video_item.pos().x()
+                y_offset = detached_window.video_item.pos().y()
+                
+                # Add half the video width to objects from right field (src=1)
+                x_position = obj['t_c'][0]
+                if obj['src'] == 1:
+                    x_position += self.topdown_width / 2 - 20
+                
+                # Position overlay
+                x = x_offset + (x_position - 10) * scale_x
+                y = y_offset + (obj['t_c'][1] - 10) * scale_y
+                w = 20 * scale_x
+                h = 20 * scale_y
+                
+                overlay.setRect(QRectF(x, y, w, h))
+                overlay.setVisible(True)
+                
+                # Setup click callback
+                obj_info = obj.copy()
+                overlay.setClickCallback(lambda info=obj_info: self.show_object_info(info))
+            else:
+                overlay.setVisible(False)
+    
+    def update_detached_left_overlays(self, left_objects):
+        """Update overlays for the detached left field view"""
+        detached_window = self.player.left_view.detached_window
+        if not detached_window:
+            return
+            
+        # Calculate scale factors for detached window
+        video_size = detached_window.video_item.size()
+        if video_size.width() > 0:
+            scale_x = video_size.width() / self.field_width
+            scale_y = video_size.height() / self.field_height
+        else:
+            scale_x = self.left_scale_x
+            scale_y = self.left_scale_y
+            
+        for idx, overlay in enumerate(self.detached_left_overlays):
+            if idx < len(left_objects):
+                obj = left_objects[idx]
+                
+                # Get video item position
+                video_rect = detached_window.video_item.boundingRect()
+                x_offset = detached_window.video_item.pos().x()
+                y_offset = detached_window.video_item.pos().y()
+                
+                # Position overlay
+                x = x_offset + obj['bbox'][0] * scale_x
+                y = y_offset + obj['bbox'][1] * scale_y
+                w = (obj['bbox'][2] - obj['bbox'][0]) * scale_x
+                h = (obj['bbox'][3] - obj['bbox'][1]) * scale_y
+                
+                overlay.setRect(QRectF(x, y, w, h))
+                overlay.setVisible(True)
+                
+                # Setup click callback
+                obj_info = obj.copy()
+                overlay.setClickCallback(lambda info=obj_info: self.show_object_info(info))
+            else:
+                overlay.setVisible(False)
+    
+    def update_detached_right_overlays(self, right_objects):
+        """Update overlays for the detached right field view"""
+        detached_window = self.player.right_view.detached_window
+        if not detached_window:
+            return
+            
+        # Calculate scale factors for detached window
+        video_size = detached_window.video_item.size()
+        if video_size.width() > 0:
+            scale_x = video_size.width() / self.field_width
+            scale_y = video_size.height() / self.field_height
+        else:
+            scale_x = self.right_scale_x
+            scale_y = self.right_scale_y
+            
+        for idx, overlay in enumerate(self.detached_right_overlays):
+            if idx < len(right_objects):
+                obj = right_objects[idx]
+                
+                # Get video item position
+                video_rect = detached_window.video_item.boundingRect()
+                x_offset = detached_window.video_item.pos().x()
+                y_offset = detached_window.video_item.pos().y()
+                
+                # Position overlay
+                x = x_offset + obj['bbox'][0] * scale_x
+                y = y_offset + obj['bbox'][1] * scale_y
+                w = (obj['bbox'][2] - obj['bbox'][0]) * scale_x
+                h = (obj['bbox'][3] - obj['bbox'][1]) * scale_y
                 
                 overlay.setRect(QRectF(x, y, w, h))
                 overlay.setVisible(True)
