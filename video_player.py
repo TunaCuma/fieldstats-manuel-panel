@@ -1,7 +1,7 @@
 import os
 from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QFileDialog, 
-    QLabel, QMessageBox, QStatusBar, QMenuBar, QMenu
+    QLabel, QMessageBox, QStatusBar, QMenuBar, QMenu, QDialog, QHBoxLayout, QCheckBox, QPushButton
 )
 from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PyQt6.QtCore import Qt, QUrl, QTimer, pyqtSignal
@@ -177,6 +177,17 @@ class VideoPlayer(QMainWindow):
         self.toggleTransformAction = QAction("Toggle &Transform View", self)
         self.toggleTransformAction.triggered.connect(self.toggle_transform_view)
         self.viewMenu.addAction(self.toggleTransformAction)
+        
+        # Add new view management options
+        self.viewMenu.addSeparator()
+        self.manageViewsAction = QAction("&Manage Views...", self)
+        self.manageViewsAction.triggered.connect(self.show_view_control_dialog)
+        self.viewMenu.addAction(self.manageViewsAction)
+        
+        # Optional shortcut for showing all views
+        self.showAllViewsAction = QAction("Show &All Views", self)
+        self.showAllViewsAction.triggered.connect(self.show_all_views)
+        self.viewMenu.addAction(self.showAllViewsAction)
     
     def load_videos(self, transform_path, left_path, right_path):
         """Load all three videos and synchronize them"""
@@ -380,3 +391,75 @@ class VideoPlayer(QMainWindow):
         """Handle window resize events"""
         super().resizeEvent(event)
         self.handle_view_resized()
+
+    def show_view_control_dialog(self):
+        """Show a dialog to control visibility of all views"""
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Manage Views")
+        layout = QVBoxLayout(dialog)
+        
+        # Title
+        title_label = QLabel("Show/Hide Video Panels")
+        title_label.setStyleSheet("font-weight: bold; font-size: 14px;")
+        layout.addWidget(title_label)
+        
+        # Left field checkbox
+        left_check = QCheckBox("Left Field View")
+        left_check.setChecked(self.is_left_visible)
+        layout.addWidget(left_check)
+        
+        # Right field checkbox
+        right_check = QCheckBox("Right Field View")
+        right_check.setChecked(self.is_right_visible)
+        layout.addWidget(right_check)
+        
+        # Transform checkbox
+        transform_check = QCheckBox("Transform View")
+        transform_check.setChecked(self.is_transform_visible)
+        layout.addWidget(transform_check)
+        
+        # Buttons
+        button_layout = QHBoxLayout()
+        apply_button = QPushButton("Apply")
+        cancel_button = QPushButton("Cancel")
+        
+        apply_button.clicked.connect(lambda: self.apply_view_visibility(
+            left_check.isChecked(), 
+            right_check.isChecked(), 
+            transform_check.isChecked()
+        ) or dialog.accept())
+        
+        cancel_button.clicked.connect(dialog.reject)
+        
+        button_layout.addStretch()
+        button_layout.addWidget(apply_button)
+        button_layout.addWidget(cancel_button)
+        
+        layout.addLayout(button_layout)
+        dialog.exec()
+
+    def apply_view_visibility(self, left_visible, right_visible, transform_visible):
+        """Apply visibility settings to all views"""
+        # Only toggle if the state is different
+        if self.is_left_visible != left_visible:
+            self.toggle_left_field()
+        
+        if self.is_right_visible != right_visible:
+            self.toggle_right_field()
+        
+        if self.is_transform_visible != transform_visible:
+            self.toggle_transform_view()
+        
+        # Update the layout after changes
+        self.handle_view_resized()
+    
+    def show_all_views(self):
+        """Show all views that might be hidden"""
+        if not self.is_left_visible:
+            self.left_view.toggle_visibility()
+        
+        if not self.is_right_visible:
+            self.right_view.toggle_visibility()
+        
+        if not self.is_transform_visible:
+            self.transform_view.toggle_visibility()

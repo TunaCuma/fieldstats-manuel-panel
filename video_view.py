@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, QSizeF, pyqtSignal
 from PyQt6.QtMultimediaWidgets import QGraphicsVideoItem
-from PyQt6.QtGui import QAction
+from PyQt6.QtGui import QAction, QIcon
 
 class VideoView(QWidget):
     """A self-contained widget for displaying a video with controls"""
@@ -37,6 +37,12 @@ class VideoView(QWidget):
         self.title_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
         self.header_layout.addWidget(self.title_label)
         
+        # Status label (for showing "Hidden" when view is hidden)
+        self.status_label = QLabel("")
+        self.status_label.setStyleSheet("color: gray; font-style: italic;")
+        self.status_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+        self.header_layout.addWidget(self.status_label)
+        
         # Spacer
         self.header_layout.addStretch()
         
@@ -55,6 +61,12 @@ class VideoView(QWidget):
         
         self.layout.addWidget(self.header)
         
+        # Container for video content (to easily hide/show)
+        self.content_container = QWidget()
+        self.content_layout = QVBoxLayout(self.content_container)
+        self.content_layout.setContentsMargins(0, 0, 0, 0)
+        self.content_layout.setSpacing(0)
+        
         # Graphics view for video
         self.scene = QGraphicsScene()
         self.view = QGraphicsView(self.scene)
@@ -69,12 +81,16 @@ class VideoView(QWidget):
         self.video_item = QGraphicsVideoItem()
         self.scene.addItem(self.video_item)
         
-        self.layout.addWidget(self.view)
+        self.content_layout.addWidget(self.view)
+        self.layout.addWidget(self.content_container)
         
         # Context menu
         self.view.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.view.customContextMenuRequested.connect(self.show_context_menu)
-    
+        
+        # Setup sizing policy for collapsed state
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        
     def show_context_menu(self, pos):
         """Show context menu for the video view"""
         context_menu = QMenu(self)
@@ -84,7 +100,9 @@ class VideoView(QWidget):
         detach_action.triggered.connect(self.detach_view)
         context_menu.addAction(detach_action)
         
-        hide_action = QAction("Hide panel", self)
+        # Change text based on current visibility
+        visibility_text = "Show panel" if not self.is_visible else "Hide panel"
+        hide_action = QAction(visibility_text, self)
         hide_action.triggered.connect(self.toggle_visibility)
         context_menu.addAction(hide_action)
         
@@ -94,18 +112,27 @@ class VideoView(QWidget):
     def toggle_visibility(self):
         """Toggle the visibility of the video content"""
         self.is_visible = not self.is_visible
-        self.view.setVisible(self.is_visible)
+        self.content_container.setVisible(self.is_visible)
         
-        # Update button text
+        # Update button text and status
         if self.is_visible:
             self.hide_btn.setText("−")  # Unicode for minus
             self.hide_btn.setToolTip("Hide panel")
+            self.status_label.setText("")
+            # Restore expanded size policy
+            self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         else:
             self.hide_btn.setText("＋")  # Unicode for plus
             self.hide_btn.setToolTip("Show panel")
+            self.status_label.setText("[Hidden]")
+            # Collapse size when hidden
+            self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         
         # Emit signal for parent containers to adjust
         self.toggledVisibility.emit(self.is_visible)
+        
+        # Explicitly update UI to fix any layout issues
+        self.updateGeometry()
     
     def detach_view(self):
         """Detach video view to a separate window"""
@@ -117,7 +144,7 @@ class VideoView(QWidget):
             self.detached_window.closed.connect(self.reattach_view)
             
             # Hide this view while it's detached
-            self.view.setVisible(False)
+            self.content_container.setVisible(False)
             self.pop_out_btn.setEnabled(False)
             
             # We need to access the video player that this view belongs to
@@ -139,7 +166,8 @@ class VideoView(QWidget):
     def reattach_view(self):
         """Reattach the video view after the detached window is closed"""
         self.detached_window = None
-        self.view.setVisible(True)
+        if self.is_visible:
+            self.content_container.setVisible(True)
         self.pop_out_btn.setEnabled(True)
         
         # Signal that we need to restore the video output
@@ -187,3 +215,8 @@ class VideoView(QWidget):
         else:
             # No valid video size, use view size
             self.video_item.setSize(QSizeF(view_size.width(), view_size.height()))
+    
+    def set_visible(self, visible):
+        """Public method to programmatically set visibility"""
+        if self.is_visible != visible:
+            self.toggle_visibility()
