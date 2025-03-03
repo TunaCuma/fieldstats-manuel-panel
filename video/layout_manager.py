@@ -33,14 +33,20 @@ class LayoutManager(QWidget):
         # Create main vertical splitter
         self.main_splitter = QSplitter(Qt.Orientation.Vertical)
         self.main_splitter.setContentsMargins(0, 0, 0, 0)
-        self.main_splitter.setHandleWidth(5)  # Increased handle thickness
+        self.main_splitter.setHandleWidth(8)  # Thicker handle for better visibility
+        
+        # Apply the dark theme splitter styling
         self.main_splitter.setStyleSheet("""
             QSplitter::handle {
-                background-color: #cccccc;
-                border: 1px solid #999999;
+                background-color: #353535;
+                border: 1px solid #424242;
             }
             QSplitter::handle:hover {
-                background-color: #aaaaaa;
+                background-color: #454545;
+                border: 1px solid #555555;
+            }
+            QSplitter::handle:pressed {
+                background-color: #505050;
             }
         """)
         
@@ -53,16 +59,9 @@ class LayoutManager(QWidget):
         # Create horizontal splitter for left and right views
         self.horizontal_splitter = QSplitter(Qt.Orientation.Horizontal)
         self.horizontal_splitter.setContentsMargins(0, 0, 0, 0)
-        self.horizontal_splitter.setHandleWidth(5)  # Increased handle thickness
-        self.horizontal_splitter.setStyleSheet("""
-            QSplitter::handle {
-                background-color: #cccccc;
-                border: 1px solid #999999;
-            }
-            QSplitter::handle:hover {
-                background-color: #aaaaaa;
-            }
-        """)
+        self.horizontal_splitter.setHandleWidth(8)  # Thicker handle for better visibility
+        # Use the same styling as main splitter
+        self.horizontal_splitter.setStyleSheet(self.main_splitter.styleSheet())
         self.top_layout.addWidget(self.horizontal_splitter)
         
         # Add the top container to the main splitter
@@ -86,6 +85,21 @@ class LayoutManager(QWidget):
         
         # Layout customization menu button
         self.layout_menu_btn = QPushButton("Layout ▼")
+        self.layout_menu_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #353535;
+                color: #ffffff;
+                border: 1px solid #424242;
+                padding: 4px 8px;
+                border-radius: 3px;
+            }
+            QPushButton:hover {
+                background-color: #424242;
+            }
+            QPushButton:pressed {
+                background-color: #2a82da;
+            }
+        """)
         self.layout_menu_btn.clicked.connect(self.show_layout_menu)
         
         # Add layout menu button to a separate widget at the top
@@ -94,7 +108,7 @@ class LayoutManager(QWidget):
         self.menu_layout.setContentsMargins(5, 5, 5, 5)
         
         self.layout_title = QLabel("Football Analysis Player")
-        self.layout_title.setStyleSheet("font-weight: bold; font-size: 16px;")
+        self.layout_title.setStyleSheet("font-weight: bold; font-size: 16px; color: #ffffff;")
         self.menu_layout.addWidget(self.layout_title)
         self.menu_layout.addStretch()
         self.menu_layout.addWidget(self.layout_menu_btn)
@@ -283,6 +297,24 @@ class LayoutManager(QWidget):
     def show_layout_menu(self):
         """Show layout customization menu with view toggle options"""
         menu = QMenu(self)
+        menu.setStyleSheet("""
+            QMenu {
+                background-color: #353535;
+                color: #ffffff;
+                border: 1px solid #424242;
+            }
+            QMenu::item {
+                padding: 5px 20px 5px 20px;
+            }
+            QMenu::item:selected {
+                background-color: #2a82da;
+            }
+            QMenu::separator {
+                height: 1px;
+                background-color: #424242;
+                margin: 5px 0px 5px 0px;
+            }
+        """)
         
         # Add layout presets
         split_equal_action = menu.addAction("Equal Split")
