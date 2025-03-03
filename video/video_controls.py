@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import (
     QWidget, QHBoxLayout, QLabel, QPushButton,
     QLineEdit, QStyle, QSlider
 )
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import QTimer, pyqtSignal, Qt
 
 class VideoControls(QWidget):
     """A widget providing streamlined video playback controls in a single row"""
@@ -38,6 +38,9 @@ class VideoControls(QWidget):
         self.play_btn = QPushButton()
         self.play_btn.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
         self.play_btn.setFixedWidth(40)
+        
+        # Set explicit focus policy for the play button
+        self.play_btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         
         self.stop_btn = QPushButton()
         self.stop_btn.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaStop))
@@ -81,6 +84,10 @@ class VideoControls(QWidget):
         self.next_frame_btn.clicked.connect(self.nextFrameClicked.emit)
         self.frame_input.returnPressed.connect(self.go_to_frame)
         self.go_frame_btn.clicked.connect(self.go_to_frame)
+        
+        # Schedule focus to be set after the widget is fully initialized
+        # This ensures the focus request is processed after widget is displayed
+        QTimer.singleShot(0, self.play_btn.setFocus)
     
     def go_to_frame(self):
         """Process go to frame request"""
@@ -111,3 +118,8 @@ class VideoControls(QWidget):
             self.play_btn.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause))
         else:
             self.play_btn.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
+            
+    def showEvent(self, event):
+        """Override showEvent to set focus when the widget is shown"""
+        super().showEvent(event)
+        self.play_btn.setFocus()
