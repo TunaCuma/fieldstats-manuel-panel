@@ -1,10 +1,7 @@
-import sys
 import json
-from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QBrush, QColor, QPen
 from PyQt6.QtCore import Qt, QRectF
 from custom_rect_item import CustomRectItem
-from video_player import VideoPlayer
 
 class JSONOverlayManager:
     def __init__(self, player, json_path):
@@ -62,7 +59,7 @@ class JSONOverlayManager:
             orange_pen = QPen(QColor("orange"), 3)
             rect.setPen(orange_pen)
             self.topdown_overlays.append(rect)
-            self.player.scene.addItem(rect)
+            self.player.transform_view.scene.addItem(rect)
             rect.setVisible(False)
 
         # Create overlays for left field view
@@ -73,7 +70,7 @@ class JSONOverlayManager:
             green_pen = QPen(QColor("green"), 3)
             rect.setPen(green_pen)
             self.left_overlays.append(rect)
-            self.player.left_scene.addItem(rect)
+            self.player.left_view.scene.addItem(rect)
             rect.setVisible(False)
 
         # Create overlays for right field view
@@ -84,7 +81,7 @@ class JSONOverlayManager:
             blue_pen = QPen(QColor("blue"), 3)
             rect.setPen(blue_pen)
             self.right_overlays.append(rect)
-            self.player.right_scene.addItem(rect)
+            self.player.right_view.scene.addItem(rect)
             rect.setVisible(False)
     
     def connect_signals(self):
@@ -96,28 +93,28 @@ class JSONOverlayManager:
         """Update scaling factors based on the actual video item sizes rather than view sizes"""
         # Get the video item sizes (respecting aspect ratio)
         # For transformed view
-        if self.player.video_item.size().width() > 0:
-            self.topdown_view_width = self.player.video_item.size().width()
-            self.topdown_view_height = self.player.video_item.size().height()
+        if self.player.transform_view.video_item.size().width() > 0:
+            self.topdown_view_width = self.player.transform_view.video_item.size().width()
+            self.topdown_view_height = self.player.transform_view.video_item.size().height()
         else:
-            self.topdown_view_width = self.player.view.width()
-            self.topdown_view_height = self.player.view.height()
+            self.topdown_view_width = self.player.transform_view.view.width()
+            self.topdown_view_height = self.player.transform_view.view.height()
             
         # For left field view
-        if self.player.left_video_item.size().width() > 0:
-            self.left_view_width = self.player.left_video_item.size().width()
-            self.left_view_height = self.player.left_video_item.size().height()
+        if self.player.left_view.video_item.size().width() > 0:
+            self.left_view_width = self.player.left_view.video_item.size().width()
+            self.left_view_height = self.player.left_view.video_item.size().height()
         else:
-            self.left_view_width = self.player.left_view.width()
-            self.left_view_height = self.player.left_view.height()
+            self.left_view_width = self.player.left_view.view.width()
+            self.left_view_height = self.player.left_view.view.height()
             
         # For right field view
-        if self.player.right_video_item.size().width() > 0:
-            self.right_view_width = self.player.right_video_item.size().width()
-            self.right_view_height = self.player.right_video_item.size().height()
+        if self.player.right_view.video_item.size().width() > 0:
+            self.right_view_width = self.player.right_view.video_item.size().width()
+            self.right_view_height = self.player.right_view.video_item.size().height()
         else:
-            self.right_view_width = self.player.right_view.width()
-            self.right_view_height = self.player.right_view.height()
+            self.right_view_width = self.player.right_view.view.width()
+            self.right_view_height = self.player.right_view.view.height()
         
         # Calculate scale factors
         self.topdown_scale_x = self.topdown_view_width / self.topdown_width
@@ -162,8 +159,8 @@ class JSONOverlayManager:
                 obj = transformed_objects[idx]
                 # Use transformed center coordinates
                 # Account for video item position offset due to aspect ratio scaling
-                x_offset = self.player.video_item.pos().x()
-                y_offset = self.player.video_item.pos().y()
+                x_offset = self.player.transform_view.video_item.pos().x()
+                y_offset = self.player.transform_view.video_item.pos().y()
                 
                 # Add half the video width to objects from right field (src=1)
                 x_position = obj['t_c'][0]
@@ -186,12 +183,12 @@ class JSONOverlayManager:
         
         # Update left field overlays (using bbox coordinates)
         for idx, overlay in enumerate(self.left_overlays):
-            if idx < len(left_objects):
+            if idx < len(left_objects) and self.player.is_left_visible:
                 obj = left_objects[idx]
                 # Use bounding box coordinates
                 # Account for video item position offset due to aspect ratio scaling
-                x_offset = self.player.left_video_item.pos().x()
-                y_offset = self.player.left_video_item.pos().y()
+                x_offset = self.player.left_view.video_item.pos().x()
+                y_offset = self.player.left_view.video_item.pos().y()
                 
                 x = x_offset + obj['bbox'][0] * self.left_scale_x
                 y = y_offset + obj['bbox'][1] * self.left_scale_y
@@ -209,12 +206,12 @@ class JSONOverlayManager:
         
         # Update right field overlays (using bbox coordinates)
         for idx, overlay in enumerate(self.right_overlays):
-            if idx < len(right_objects):
+            if idx < len(right_objects) and self.player.is_right_visible:
                 obj = right_objects[idx]
                 # Use bounding box coordinates
                 # Account for video item position offset due to aspect ratio scaling
-                x_offset = self.player.right_video_item.pos().x()
-                y_offset = self.player.right_video_item.pos().y()
+                x_offset = self.player.right_view.video_item.pos().x()
+                y_offset = self.player.right_view.video_item.pos().y()
                 
                 x = x_offset + obj['bbox'][0] * self.right_scale_x
                 y = y_offset + obj['bbox'][1] * self.right_scale_y

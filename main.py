@@ -48,7 +48,7 @@ def check_video_files():
         "json": json_file,
         "missing": missing_files
     }
-
+    
 def main():
     app = QApplication(sys.argv)
     set_dark_mode(app)
