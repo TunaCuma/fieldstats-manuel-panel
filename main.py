@@ -2,8 +2,8 @@ import sys
 import os
 from PyQt6.QtWidgets import QApplication, QMessageBox
 from PyQt6.QtGui import QPalette, QColor
-from video_player import VideoPlayer
-from jsonoverlay_manager import JSONOverlayManager
+from video import VideoPlayer
+from overlay import JSONOverlayManager
 
 def set_dark_mode(app):
     """Apply dark mode styling to the application"""
@@ -24,22 +24,18 @@ def set_dark_mode(app):
 
 def check_video_files():
     """Check if required video files exist and return their paths"""
-    # Hardcoded video filenames
-    transform_video = "topdown.webm"
-    left_field_video = "field_left.mp4"
-    right_field_video = "field_right.mp4"
-    json_file = "turkmen.json"
+    input_folder = "input"
+    
+    transform_video = os.path.join(input_folder, "topdown.webm")
+    left_field_video = os.path.join(input_folder, "field_left.mp4")
+    right_field_video = os.path.join(input_folder, "field_right.mp4")
+    json_file = os.path.join(input_folder, "turkmen.json")
     
     missing_files = []
     
-    if not os.path.exists(transform_video):
-        missing_files.append(transform_video)
-    if not os.path.exists(left_field_video):
-        missing_files.append(left_field_video)
-    if not os.path.exists(right_field_video):
-        missing_files.append(right_field_video)
-    if not os.path.exists(json_file):
-        missing_files.append(json_file)
+    for file in [transform_video, left_field_video, right_field_video, json_file]:
+        if not os.path.exists(file):
+            missing_files.append(file)
     
     return {
         "transform": transform_video,
@@ -62,7 +58,7 @@ def main():
         msg.setWindowTitle("Missing Files")
         msg.setText("The following required files are missing:")
         msg.setInformativeText("\n".join(files["missing"]))
-        msg.setDetailedText("Please ensure all required video files and JSON data are in the application directory.")
+        msg.setDetailedText("Please ensure all required video files and JSON data are in the 'input' directory.")
         msg.exec()
         return 1
     

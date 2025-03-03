@@ -1,7 +1,7 @@
 import json
 from PyQt6.QtGui import QBrush, QColor, QPen
 from PyQt6.QtCore import Qt, QRectF
-from custom_rect_item import CustomRectItem
+from .custom_rect_item import CustomRectItem
 
 class JSONOverlayManager:
     def __init__(self, player, json_path):

@@ -7,10 +7,10 @@ from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtCore import Qt, QUrl, QTimer, pyqtSignal
 from PyQt6.QtGui import QAction
 
-from video_view_subclasses import LeftFieldView, RightFieldView, TransformView
-from video_controls import VideoControls
-from layout_manager import LayoutManager
-from media_synchronizer import MediaSynchronizer
+from .video_view_subclasses import LeftFieldView, RightFieldView, TransformView
+from .video_controls import VideoControls
+from .layout_manager import LayoutManager
+from .media_synchronizer import MediaSynchronizer
 
 class VideoPlayer(QMainWindow):
     viewResized = pyqtSignal()

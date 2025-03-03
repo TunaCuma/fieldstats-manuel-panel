@@ -1,5 +1,5 @@
 from PyQt6.QtCore import pyqtSignal
-from video_view import VideoView
+from .video_view import VideoView
 
 class LeftFieldView(VideoView):
     """Video view specifically for the left field camera"""

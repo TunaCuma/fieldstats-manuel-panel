@@ -136,7 +136,7 @@ class VideoView(QWidget):
     
     def detach_view(self):
         """Detach video view to a separate window"""
-        from detached_video_window import DetachedVideoWindow
+        from .detached_video_window import DetachedVideoWindow
         
         # Create detached window if it doesn't exist
         if not self.detached_window:
