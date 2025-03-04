@@ -9,14 +9,14 @@ CHUNK_LENGTH = 1800
 
 
 def update(start_frame, coord_ids):
-    """
-    Update the start mapping based on coord_ids, filter the JSON data,
-    and then perform tracking with the filtered data.
+    """Update the start mapping based on coord_ids, filter the JSON data, and
+    then perform tracking with the filtered data.
 
     :param start_frame: The frame index from which to start processing.
-    :param coord_ids: A dictionary mapping 2D coordinate arrays (or string representations of them)
-                      to an integer id.
-    :return: A tuple (frame_index, lost_ids, tracking_result) where tracking_result is a JSON-like dict.
+    :param coord_ids: A dictionary mapping 2D coordinate arrays (or
+        string representations of them) to an integer id.
+    :return: A tuple (frame_index, lost_ids, tracking_result) where
+        tracking_result is a JSON-like dict.
     """
     # Load original JSON from disk
     with open("radon.json") as f:
@@ -85,13 +85,15 @@ def update(start_frame, coord_ids):
 
 
 def perform_tracking_from_json(input_data, start_frame, start_map):
-    """
-    Perform tracking using ByteTrack based on bounding box information from input_data.
+    """Perform tracking using ByteTrack based on bounding box information from
+    input_data.
 
     :param input_data: List of frame detection dictionaries.
     :param start_frame: The starting frame index.
-    :param start_map: Mapping from start frame's object indices to an assigned id.
-    :return: A tuple (last_frame_index, lost_ids, tracking_result) where tracking_result is a JSON-like dict.
+    :param start_map: Mapping from start frame's object indices to an
+        assigned id.
+    :return: A tuple (last_frame_index, lost_ids, tracking_result) where
+        tracking_result is a JSON-like dict.
     """
     # Initialize ByteTrack
     tracker = sv.ByteTrack(

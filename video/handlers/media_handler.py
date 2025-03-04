@@ -3,7 +3,7 @@ from PyQt6.QtMultimedia import QMediaPlayer
 
 
 class MediaHandler:
-    """Handles media player instances and operations"""
+    """Handles media player instances and operations."""
 
     def __init__(
         self,
@@ -61,7 +61,7 @@ class MediaHandler:
         self.frame_duration = 33.33
 
     def load_videos(self, transform_path, left_path, right_path):
-        """Load all three videos and synchronize them"""
+        """Load all three videos and synchronize them."""
         self.main_player.setSource(QUrl.fromLocalFile(transform_path))
         self.left_player.setSource(QUrl.fromLocalFile(left_path))
         self.right_player.setSource(QUrl.fromLocalFile(right_path))
@@ -70,16 +70,16 @@ class MediaHandler:
         self.controls.set_play_icon(False)
 
     def open_videos(self):
-        """Open video files via file dialog"""
+        """Open video files via file dialog."""
         # For future implementation using QFileDialog
         self.status_bar.showMessage("Open videos dialog not implemented yet")
 
     def open_project(self):
-        """For future implementation to open a project file"""
+        """For future implementation to open a project file."""
         self.status_bar.showMessage("Project file support will be added in the future")
 
     def _update_video_sizes(self, status):
-        """Update all video sizes when media status changes"""
+        """Update all video sizes when media status changes."""
         # Check if the media is loaded and ready
         if status in [
             QMediaPlayer.MediaStatus.LoadedMedia,
@@ -94,7 +94,7 @@ class MediaHandler:
             self.parent.viewResized.emit()
 
     def _duration_changed(self, duration):
-        """Handle duration change event"""
+        """Handle duration change event."""
         self.duration = duration
 
         try:
@@ -116,7 +116,7 @@ class MediaHandler:
         self.controls.update_position_slider(0, duration)
 
     def _position_changed(self, position):
-        """Handle position change event"""
+        """Handle position change event."""
         if self.fps > 0:
             self.current_frame = int(position / 1000 * self.fps)
             self.controls.update_frame_info(
@@ -125,21 +125,21 @@ class MediaHandler:
             self.controls.update_position_slider(position, self.duration)
 
     def _handle_error(self, error, error_string):
-        """Handle media player errors"""
+        """Handle media player errors."""
         self.status_bar.showMessage(f"Error: {error_string}")
 
     def get_current_frame(self):
-        """Get current frame number"""
+        """Get current frame number."""
         return self.current_frame
 
     def get_total_frames(self):
-        """Get total frames count"""
+        """Get total frames count."""
         return self.total_frames
 
     def get_fps(self):
-        """Get current frames per second"""
+        """Get current frames per second."""
         return self.fps
 
     def get_frame_duration(self):
-        """Get duration of a single frame in milliseconds"""
+        """Get duration of a single frame in milliseconds."""
         return self.frame_duration

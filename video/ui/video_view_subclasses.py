@@ -4,7 +4,7 @@ from .video_view import VideoView
 
 
 class LeftFieldView(VideoView):
-    """Video view specifically for the left field camera"""
+    """Video view specifically for the left field camera."""
 
     detachRequested = pyqtSignal()
     reattachRequested = pyqtSignal()
@@ -13,16 +13,16 @@ class LeftFieldView(VideoView):
         super().__init__("Left Field", "red")
 
     def emit_detach_request(self):
-        """Signal to parent that this view needs to be detached"""
+        """Signal to parent that this view needs to be detached."""
         self.detachRequested.emit()
 
     def emit_reattach_request(self):
-        """Signal to parent that this view needs to be reattached"""
+        """Signal to parent that this view needs to be reattached."""
         self.reattachRequested.emit()
 
 
 class RightFieldView(VideoView):
-    """Video view specifically for the right field camera"""
+    """Video view specifically for the right field camera."""
 
     detachRequested = pyqtSignal()
     reattachRequested = pyqtSignal()
@@ -31,16 +31,16 @@ class RightFieldView(VideoView):
         super().__init__("Right Field", "blue")
 
     def emit_detach_request(self):
-        """Signal to parent that this view needs to be detached"""
+        """Signal to parent that this view needs to be detached."""
         self.detachRequested.emit()
 
     def emit_reattach_request(self):
-        """Signal to parent that this view needs to be reattached"""
+        """Signal to parent that this view needs to be reattached."""
         self.reattachRequested.emit()
 
 
 class TransformView(VideoView):
-    """Video view specifically for the transformed view"""
+    """Video view specifically for the transformed view."""
 
     detachRequested = pyqtSignal()
     reattachRequested = pyqtSignal()
@@ -49,9 +49,9 @@ class TransformView(VideoView):
         super().__init__("Transformed View", "orange")
 
     def emit_detach_request(self):
-        """Signal to parent that this view needs to be detached"""
+        """Signal to parent that this view needs to be detached."""
         self.detachRequested.emit()
 
     def emit_reattach_request(self):
-        """Signal to parent that this view needs to be reattached"""
+        """Signal to parent that this view needs to be reattached."""
         self.reattachRequested.emit()

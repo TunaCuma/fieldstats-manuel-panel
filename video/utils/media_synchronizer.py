@@ -3,7 +3,7 @@ from PyQt6.QtMultimedia import QMediaPlayer
 
 
 class MediaSynchronizer(QObject):
-    """Handles synchronization between multiple QMediaPlayer instances"""
+    """Handles synchronization between multiple QMediaPlayer instances."""
 
     positionChanged = pyqtSignal(int)
     playbackStateChanged = pyqtSignal(QMediaPlayer.PlaybackState)
@@ -21,7 +21,7 @@ class MediaSynchronizer(QObject):
         self.sync_timer.setInterval(500)  # Check every 500ms
 
     def add_player(self, player, is_primary=False):
-        """Add a media player to be synchronized"""
+        """Add a media player to be synchronized."""
         self.players.append(player)
 
         if is_primary or self.primary_player is None:
@@ -31,12 +31,12 @@ class MediaSynchronizer(QObject):
             player.playbackStateChanged.connect(self.handle_state_changed)
 
     def handle_position_changed(self, position):
-        """Handle position change from primary player"""
+        """Handle position change from primary player."""
         self.current_position = position
         self.positionChanged.emit(position)
 
     def handle_state_changed(self, state):
-        """Handle playback state change from primary player"""
+        """Handle playback state change from primary player."""
         self.is_playing = state == QMediaPlayer.PlaybackState.PlayingState
         self.playbackStateChanged.emit(state)
 
@@ -47,7 +47,7 @@ class MediaSynchronizer(QObject):
             self.sync_timer.stop()
 
     def check_synchronization(self):
-        """Check and correct synchronization between players"""
+        """Check and correct synchronization between players."""
         if not self.primary_player or not self.is_playing:
             return
 
@@ -63,33 +63,33 @@ class MediaSynchronizer(QObject):
                     player.setPosition(primary_pos)
 
     def play(self):
-        """Start playback of all media players"""
+        """Start playback of all media players."""
         for player in self.players:
             player.play()
         self.is_playing = True
         self.sync_timer.start()
 
     def pause(self):
-        """Pause playback of all media players"""
+        """Pause playback of all media players."""
         for player in self.players:
             player.pause()
         self.is_playing = False
         self.sync_timer.stop()
 
     def stop(self):
-        """Stop playback of all media players"""
+        """Stop playback of all media players."""
         for player in self.players:
             player.stop()
         self.is_playing = False
         self.sync_timer.stop()
 
     def set_position(self, position):
-        """Set position of all media players"""
+        """Set position of all media players."""
         for player in self.players:
             player.setPosition(position)
         self.current_position = position
 
     def set_muted(self, player, muted):
-        """Set muted state for a specific player"""
+        """Set muted state for a specific player."""
         if player in self.players:
             player.audioOutput().setMuted(muted)

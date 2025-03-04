@@ -1,16 +1,16 @@
-"""
-VideoPlayer property bridge module to handle accessor properties between components
-"""
+"""VideoPlayer property bridge module to handle accessor properties between
+components."""
 
 
 class VideoPlayerPropertyBridge:
-    """
-    Handles property delegation between VideoPlayer components.
-    Acts as a bridge to maintain compatibility with external code while using a refactored architecture.
+    """Handles property delegation between VideoPlayer components.
+
+    Acts as a bridge to maintain compatibility with external code while
+    using a refactored architecture.
     """
 
     def __init__(self, parent):
-        """Initialize the property bridge with default values"""
+        """Initialize the property bridge with default values."""
         self.parent = parent
 
         # Initialize default property values
@@ -27,7 +27,8 @@ class VideoPlayerPropertyBridge:
         self._is_transform_visible = True
 
     def sync_properties(self):
-        """Sync properties from handlers to maintain compatibility with external code"""
+        """Sync properties from handlers to maintain compatibility with
+        external code."""
         # Update from media handler
         if hasattr(self.parent, "media_handler"):
             self._fps = self.parent.media_handler.fps
@@ -49,49 +50,49 @@ class VideoPlayerPropertyBridge:
     # Playback properties
     @property
     def current_frame(self):
-        """Accessor for current frame number"""
+        """Accessor for current frame number."""
         if hasattr(self.parent, "playback_controller"):
             return self.parent.playback_controller.current_frame
         return self._current_frame
 
     @property
     def total_frames(self):
-        """Accessor for total frames"""
+        """Accessor for total frames."""
         if hasattr(self.parent, "playback_controller"):
             return self.parent.playback_controller.total_frames
         return self._total_frames
 
     @property
     def fps(self):
-        """Accessor for frames per second"""
+        """Accessor for frames per second."""
         if hasattr(self.parent, "playback_controller"):
             return self.parent.playback_controller.fps
         return self._fps
 
     @property
     def duration(self):
-        """Accessor for video duration in milliseconds"""
+        """Accessor for video duration in milliseconds."""
         if hasattr(self.parent, "media_handler"):
             return self.parent.media_handler.duration
         return self._duration
 
     @property
     def position(self):
-        """Accessor for current playback position in milliseconds"""
+        """Accessor for current playback position in milliseconds."""
         if hasattr(self.parent, "media_player"):
             return self.parent.media_player.position()
         return 0
 
     @property
     def is_playing(self):
-        """Accessor for playback state"""
+        """Accessor for playback state."""
         if hasattr(self.parent, "playback_controller"):
             return self.parent.playback_controller.is_playing
         return self._is_playing
 
     @property
     def frame_duration(self):
-        """Accessor for frame duration in milliseconds"""
+        """Accessor for frame duration in milliseconds."""
         if hasattr(self.parent, "media_handler"):
             return self.parent.media_handler.frame_duration
         return self._frame_duration
@@ -99,21 +100,21 @@ class VideoPlayerPropertyBridge:
     # View visibility properties
     @property
     def is_left_visible(self):
-        """Accessor for left view visibility state"""
+        """Accessor for left view visibility state."""
         if hasattr(self.parent, "view_handler"):
             return self.parent.view_handler.is_left_visible
         return self._is_left_visible
 
     @property
     def is_right_visible(self):
-        """Accessor for right view visibility state"""
+        """Accessor for right view visibility state."""
         if hasattr(self.parent, "view_handler"):
             return self.parent.view_handler.is_right_visible
         return self._is_right_visible
 
     @property
     def is_transform_visible(self):
-        """Accessor for transform view visibility state"""
+        """Accessor for transform view visibility state."""
         if hasattr(self.parent, "view_handler"):
             return self.parent.view_handler.is_transform_visible
         return self._is_transform_visible

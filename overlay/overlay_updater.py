@@ -2,13 +2,13 @@ from PyQt6.QtCore import QRectF
 
 
 class OverlayUpdater:
-    """Responsible for updating overlay positions and visibility"""
+    """Responsible for updating overlay positions and visibility."""
 
     def __init__(self, manager):
         self.manager = manager
 
     def update_topdown_overlays(self, transformed_objects):
-        """Update overlays for the main transform view"""
+        """Update overlays for the main transform view."""
         for idx, overlay in enumerate(self.manager.topdown_overlays):
             if idx < len(transformed_objects):
                 obj = transformed_objects[idx]
@@ -46,7 +46,7 @@ class OverlayUpdater:
                 overlay.setVisible(False)
 
     def update_left_overlays(self, left_objects):
-        """Update overlays for the main left field view"""
+        """Update overlays for the main left field view."""
         for idx, overlay in enumerate(self.manager.left_overlays):
             if idx < len(left_objects) and self.manager.player.is_left_visible:
                 obj = left_objects[idx]
@@ -74,7 +74,7 @@ class OverlayUpdater:
                 overlay.setVisible(False)
 
     def update_right_overlays(self, right_objects):
-        """Update overlays for the main right field view"""
+        """Update overlays for the main right field view."""
         for idx, overlay in enumerate(self.manager.right_overlays):
             if idx < len(right_objects) and self.manager.player.is_right_visible:
                 obj = right_objects[idx]
@@ -102,7 +102,7 @@ class OverlayUpdater:
                 overlay.setVisible(False)
 
     def update_detached_topdown_overlays(self, transformed_objects):
-        """Update overlays for the detached transform view"""
+        """Update overlays for the detached transform view."""
         detached_window = self.manager.player.transform_view.detached_window
         if not detached_window:
             return
@@ -148,7 +148,7 @@ class OverlayUpdater:
                 overlay.setVisible(False)
 
     def update_detached_left_overlays(self, left_objects):
-        """Update overlays for the detached left field view"""
+        """Update overlays for the detached left field view."""
         detached_window = self.manager.player.left_view.detached_window
         if not detached_window:
             return
@@ -189,7 +189,7 @@ class OverlayUpdater:
                 overlay.setVisible(False)
 
     def update_detached_right_overlays(self, right_objects):
-        """Update overlays for the detached right field view"""
+        """Update overlays for the detached right field view."""
         detached_window = self.manager.player.right_view.detached_window
         if not detached_window:
             return

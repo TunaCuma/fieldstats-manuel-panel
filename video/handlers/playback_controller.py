@@ -2,7 +2,7 @@ from PyQt6.QtMultimedia import QMediaPlayer
 
 
 class PlaybackController:
-    """Controls playback functionality"""
+    """Controls playback functionality."""
 
     def __init__(
         self, synchronizer, controls, main_player, status_bar, view_resize_handler
@@ -29,7 +29,7 @@ class PlaybackController:
         )
 
     def play_pause(self):
-        """Toggle play/pause for all videos"""
+        """Toggle play/pause for all videos."""
         if self.main_player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
             self.synchronizer.pause()
             self.is_playing = False
@@ -40,17 +40,17 @@ class PlaybackController:
             self.controls.set_play_icon(True)
 
     def stop(self):
-        """Stop all videos"""
+        """Stop all videos."""
         self.synchronizer.stop()
         self.is_playing = False
         self.controls.set_play_icon(False)
 
     def set_position(self, position):
-        """Set position for all videos"""
+        """Set position for all videos."""
         self.synchronizer.set_position(position)
 
     def update_ui(self):
-        """Update UI periodically"""
+        """Update UI periodically."""
         # Update current frame from position
         position = self.main_player.position()
 
@@ -77,12 +77,12 @@ class PlaybackController:
             pass
 
     def handle_playback_state_changed(self, state):
-        """Handle playback state changes"""
+        """Handle playback state changes."""
         self.is_playing = state == QMediaPlayer.PlaybackState.PlayingState
         self.controls.set_play_icon(self.is_playing)
 
     def go_to_frame(self, frame_num):
-        """Navigate to a specific frame"""
+        """Navigate to a specific frame."""
         if frame_num < 0:
             return
 
@@ -111,7 +111,7 @@ class PlaybackController:
             )
 
     def next_frame(self):
-        """Go to next frame"""
+        """Go to next frame."""
         if self.is_playing:
             self.synchronizer.pause()
             self.is_playing = False
@@ -128,7 +128,7 @@ class PlaybackController:
         self.controls.update_frame_info(self.current_frame, self.total_frames, self.fps)
 
     def previous_frame(self):
-        """Go to previous frame"""
+        """Go to previous frame."""
         if self.is_playing:
             self.synchronizer.pause()
             self.is_playing = False

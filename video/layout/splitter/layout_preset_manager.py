@@ -1,9 +1,8 @@
 class LayoutPresetManager:
-    """Manages layout presets for splitters"""
+    """Manages layout presets for splitters."""
 
     def __init__(self, vertical_manager, horizontal_manager):
-        """
-        Initialize with references to the splitter managers
+        """Initialize with references to the splitter managers.
 
         Args:
             vertical_manager: The vertical splitter manager
@@ -13,8 +12,7 @@ class LayoutPresetManager:
         self.horizontal_manager = horizontal_manager
 
     def apply_preset(self, preset):
-        """
-        Apply a layout preset
+        """Apply a layout preset.
 
         Args:
             preset: The preset name to apply ("equal", "top", or "bottom")

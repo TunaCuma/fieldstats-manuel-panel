@@ -5,10 +5,8 @@ from .vertical_splitter import VerticalSplitterManager
 
 
 class SplitterManager:
-    """
-    Main manager class that coordinates the horizontal and vertical splitters
-    and handles view visibility and detachment.
-    """
+    """Main manager class that coordinates the horizontal and vertical
+    splitters and handles view visibility and detachment."""
 
     def __init__(self):
         # Create the vertical splitter manager
@@ -44,23 +42,24 @@ class SplitterManager:
         self.splitter_style = Styles.SPLITTER_STYLE
 
     def get_main_splitter(self):
-        """Returns the main (vertical) splitter widget for adding to layouts"""
+        """Returns the main (vertical) splitter widget for adding to
+        layouts."""
         return self.vertical_manager.get_splitter()
 
     def add_left_view(self, view):
-        """Add view to the left side of the horizontal splitter"""
+        """Add view to the left side of the horizontal splitter."""
         self.horizontal_manager.add_left_view(view)
 
     def add_right_view(self, view):
-        """Add view to the right side of the horizontal splitter"""
+        """Add view to the right side of the horizontal splitter."""
         self.horizontal_manager.add_right_view(view)
 
     def add_transform_view(self, view):
-        """Add view to the bottom container"""
+        """Add view to the bottom container."""
         self.vertical_manager.add_to_bottom(view)
 
     def handle_view_detach(self, view_name, views):
-        """Handle when a view is detached to separate window"""
+        """Handle when a view is detached to separate window."""
         # Handle horizontal splitter adjustments (left and right views)
         if view_name in ["left", "right"]:
             # Save current sizes before detaching if both views are visible
@@ -88,7 +87,7 @@ class SplitterManager:
             self.vertical_manager.handle_view_visibility(view_name, False, views_copy)
 
     def handle_view_reattach(self, view_name, views):
-        """Handle when a view is reattached from separate window"""
+        """Handle when a view is reattached from separate window."""
         # Update views dictionary
         views_copy = views.copy()
         views_copy[view_name]["visible"] = True
@@ -104,7 +103,7 @@ class SplitterManager:
             self.last_vertical_sizes = self.vertical_manager.last_sizes
 
     def handle_view_visibility(self, view_name, is_visible, views):
-        """Respond to view visibility changes and adjust layout"""
+        """Respond to view visibility changes and adjust layout."""
         # For horizontal views, delegate to horizontal manager
         if view_name in ["left", "right"]:
             self.horizontal_manager.handle_view_visibility(view_name, is_visible, views)
@@ -117,7 +116,7 @@ class SplitterManager:
         self.last_vertical_sizes = self.vertical_manager.last_sizes
 
     def apply_layout_preset(self, preset):
-        """Apply a layout preset"""
+        """Apply a layout preset."""
         self.layout_manager.apply_preset(preset)
         # Update the compatibility properties
         self.last_horizontal_sizes = self.horizontal_manager.last_sizes

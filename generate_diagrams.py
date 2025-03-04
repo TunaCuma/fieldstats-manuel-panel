@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""
-Python Class Diagram Generator
+"""Python Class Diagram Generator.
 
-This script generates UML class diagrams from Python code using Pyreverse.
-It creates a diagrams/ directory and places the output files there.
-The script generates both graphical (PNG) and textual (DOT) representations
-of the class and package diagrams. It also generates diagrams with the -k option,
-which hides module names in class names for a cleaner representation.
+This script generates UML class diagrams from Python code using
+Pyreverse. It creates a diagrams/ directory and places the output files
+there. The script generates both graphical (PNG) and textual (DOT)
+representations of the class and package diagrams. It also generates
+diagrams with the -k option, which hides module names in class names for
+a cleaner representation.
 """
 
 import os
@@ -15,8 +15,7 @@ import sys
 
 
 def generate_diagrams(project_name="panel", source_path="."):
-    """
-    Generate class and package diagrams using Pyreverse.
+    """Generate class and package diagrams using Pyreverse.
 
     Args:
         project_name (str): The name of the project (used for output filenames)

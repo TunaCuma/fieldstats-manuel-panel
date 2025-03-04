@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QMenu, QMenuBar
 
 
 class MenuHandler:
-    """Handles menu bar and associated actions"""
+    """Handles menu bar and associated actions."""
 
     def __init__(self, parent, open_videos_callback, open_project_callback):
         self.parent = parent
@@ -19,7 +19,7 @@ class MenuHandler:
         self._setup_view_menu()
 
     def _setup_file_menu(self):
-        """Set up the File menu"""
+        """Set up the File menu."""
         self.fileMenu = QMenu("&File", self.parent)
         self.menuBar.addMenu(self.fileMenu)
 
@@ -38,7 +38,7 @@ class MenuHandler:
         self.fileMenu.addAction(self.exitAction)
 
     def _setup_view_menu(self):
-        """Set up the View menu"""
+        """Set up the View menu."""
         self.viewMenu = QMenu("&View", self.parent)
         self.menuBar.addMenu(self.viewMenu)
 

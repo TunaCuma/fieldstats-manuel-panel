@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import (
 
 
 class VideoContent(QWidget):
-    """Widget containing the video display area"""
+    """Widget containing the video display area."""
 
     def __init__(self):
         super().__init__()
@@ -46,11 +46,12 @@ class VideoContent(QWidget):
         self.view.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
 
     def customContextMenuRequested(self, pos):
-        """Connect to view's context menu signal"""
+        """Connect to view's context menu signal."""
         self.view.customContextMenuRequested.connect(pos)
 
     def update_video_size(self):
-        """Update video size while maintaining aspect ratio and tracking actual video size for overlays"""
+        """Update video size while maintaining aspect ratio and tracking actual
+        video size for overlays."""
         # Get the size of the view
         view_size = self.view.size()
 

@@ -5,13 +5,13 @@ from .custom_rect_item import CustomRectItem
 
 
 class DetachedOverlayManager:
-    """Manages the creation and deletion of overlays for detached windows"""
+    """Manages the creation and deletion of overlays for detached windows."""
 
     def __init__(self, manager):
         self.manager = manager
 
     def create_detached_left_overlays(self):
-        """Create overlays for detached left field view"""
+        """Create overlays for detached left field view."""
         if not self.manager.player.left_view.detached_window:
             return
 
@@ -30,7 +30,7 @@ class DetachedOverlayManager:
             rect.setVisible(False)
 
     def create_detached_right_overlays(self):
-        """Create overlays for detached right field view"""
+        """Create overlays for detached right field view."""
         if not self.manager.player.right_view.detached_window:
             return
 
@@ -49,7 +49,7 @@ class DetachedOverlayManager:
             rect.setVisible(False)
 
     def create_detached_transform_overlays(self):
-        """Create overlays for detached transform view"""
+        """Create overlays for detached transform view."""
         if not self.manager.player.transform_view.detached_window:
             return
 
@@ -68,21 +68,21 @@ class DetachedOverlayManager:
             rect.setVisible(False)
 
     def clean_detached_left_overlays(self):
-        """Clean overlays from detached left field view"""
+        """Clean overlays from detached left field view."""
         for rect in self.manager.detached_left_overlays:
             if rect.scene():
                 rect.scene().removeItem(rect)
         self.manager.detached_left_overlays.clear()
 
     def clean_detached_right_overlays(self):
-        """Clean overlays from detached right field view"""
+        """Clean overlays from detached right field view."""
         for rect in self.manager.detached_right_overlays:
             if rect.scene():
                 rect.scene().removeItem(rect)
         self.manager.detached_right_overlays.clear()
 
     def clean_detached_transform_overlays(self):
-        """Clean overlays from detached transform view"""
+        """Clean overlays from detached transform view."""
         for rect in self.manager.detached_topdown_overlays:
             if rect.scene():
                 rect.scene().removeItem(rect)

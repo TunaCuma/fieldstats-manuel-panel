@@ -6,7 +6,7 @@ from .video_header import VideoHeader
 
 
 class VideoView(QWidget):
-    """A self-contained widget for displaying a video with controls"""
+    """A self-contained widget for displaying a video with controls."""
 
     videoResized = pyqtSignal()
     toggledVisibility = pyqtSignal(bool)
@@ -43,14 +43,14 @@ class VideoView(QWidget):
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
     def show_context_menu(self, pos):
-        """Show context menu for the video view"""
+        """Show context menu for the video view."""
         from .context_menu import create_video_view_context_menu
 
         menu = create_video_view_context_menu(self)
         menu.exec(self.content.view.mapToGlobal(pos))
 
     def toggle_visibility(self):
-        """Toggle the visibility of the video content"""
+        """Toggle the visibility of the video content."""
         self.is_visible = not self.is_visible
         self.content.setVisible(self.is_visible)
 
@@ -74,7 +74,7 @@ class VideoView(QWidget):
         self.updateGeometry()
 
     def detach_view(self):
-        """Detach video view to a separate window"""
+        """Detach video view to a separate window."""
         from .detached_video_window import DetachedVideoWindow
 
         # Create detached window if it doesn't exist
@@ -96,12 +96,13 @@ class VideoView(QWidget):
             self.detached_window.show()
 
     def set_detached_video_output(self, media_player):
-        """Set the detached window's video item as output for the media player"""
+        """Set the detached window's video item as output for the media
+        player."""
         if self.detached_window:
             media_player.setVideoOutput(self.detached_window.video_item)
 
     def reattach_view(self):
-        """Reattach the video view after the detached window is closed"""
+        """Reattach the video view after the detached window is closed."""
         self.detached_window = None
 
         # Restore view visibility if it was visible before
@@ -119,34 +120,34 @@ class VideoView(QWidget):
         self.reattachRequested.emit()
 
     def resizeEvent(self, event):
-        """Handle resize events to maintain proper video scaling"""
+        """Handle resize events to maintain proper video scaling."""
         super().resizeEvent(event)
         self.update_video_size()
         self.videoResized.emit()
 
     def update_video_size(self):
-        """Update video size while maintaining aspect ratio"""
+        """Update video size while maintaining aspect ratio."""
         if not self.is_visible:
             return
 
         self.content.update_video_size()
 
     def set_visible(self, visible):
-        """Public method to programmatically set visibility"""
+        """Public method to programmatically set visibility."""
         if self.is_visible != visible:
             self.toggle_visibility()
 
     @property
     def video_item(self):
-        """Access to video item for external connections"""
+        """Access to video item for external connections."""
         return self.content.video_item
 
     @property
     def actual_video_rect(self):
-        """Access to actual video rectangle dimensions"""
+        """Access to actual video rectangle dimensions."""
         return self.content.actual_video_rect
 
     @property
     def scene(self):
-        """Access to video scene for external components"""
+        """Access to video scene for external components."""
         return self.content.scene

@@ -2,8 +2,7 @@ import tracker  # Your tracker module with the update function
 
 
 def update_data(data):
-    """
-    Processes the tracking update using the provided JSON-like dictionary.
+    """Processes the tracking update using the provided JSON-like dictionary.
 
     Parameters:
         data (dict): Dictionary expected to contain 'coord_id' and 'frame_id'.

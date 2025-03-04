@@ -19,9 +19,10 @@ from .utils.media_synchronizer import MediaSynchronizer
 
 
 class VideoPlayer(QMainWindow):
-    """
-    Main video player application class that orchestrates all components.
-    This class has been refactored to delegate functionality to specialized handler classes.
+    """Main video player application class that orchestrates all components.
+
+    This class has been refactored to delegate functionality to
+    specialized handler classes.
     """
 
     viewResized = pyqtSignal()
@@ -56,7 +57,7 @@ class VideoPlayer(QMainWindow):
         self.timer.start(100)
 
     def _setup_main_layout(self):
-        """Initialize the main window layout"""
+        """Initialize the main window layout."""
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
         self.main_layout = QVBoxLayout(self.central_widget)
@@ -64,7 +65,7 @@ class VideoPlayer(QMainWindow):
         self.main_layout.setSpacing(0)
 
     def _setup_ui_components(self):
-        """Set up all UI components"""
+        """Set up all UI components."""
         # Create layout manager
         self.layout_manager = LayoutManager()
         self.main_layout.addWidget(self.layout_manager)
@@ -92,7 +93,7 @@ class VideoPlayer(QMainWindow):
         self.statusBar.showMessage("Ready")
 
     def _setup_handlers(self):
-        """Set up all handler classes"""
+        """Set up all handler classes."""
         # Setup media synchronizer
         self.synchronizer = MediaSynchronizer()
 
@@ -131,7 +132,7 @@ class VideoPlayer(QMainWindow):
         )
 
     def update_ui(self):
-        """Update UI periodically"""
+        """Update UI periodically."""
         # Delegate to playback controller
         self.playback_controller.update_ui()
 
@@ -140,12 +141,12 @@ class VideoPlayer(QMainWindow):
         self.prop_bridge.sync_properties()
 
     def resizeEvent(self, event):
-        """Handle window resize events"""
+        """Handle window resize events."""
         super().resizeEvent(event)
         self.view_handler.handle_view_resized()
 
     def load_videos(self, transform_path, left_path, right_path):
-        """Load all three videos and synchronize them"""
+        """Load all three videos and synchronize them."""
         self.media_handler.load_videos(transform_path, left_path, right_path)
 
     # Property proxies - forward to property bridge

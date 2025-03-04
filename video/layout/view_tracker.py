@@ -1,5 +1,5 @@
 class ViewTracker:
-    """Tracks the visibility and state of views"""
+    """Tracks the visibility and state of views."""
 
     def __init__(self):
         # Track view visibility status
@@ -10,28 +10,28 @@ class ViewTracker:
         }
 
     def register_view(self, view_name, view, container):
-        """Register a view for tracking"""
+        """Register a view for tracking."""
         self.views[view_name]["view"] = view
         self.views[view_name]["container"] = container
 
     def update_visibility(self, view_name, is_visible):
-        """Update the visibility state of a view"""
+        """Update the visibility state of a view."""
         self.views[view_name]["visible"] = is_visible
 
     def is_view_visible(self, view_name):
-        """Check if a view is visible"""
+        """Check if a view is visible."""
         return self.views[view_name]["visible"]
 
     def get_view(self, view_name):
-        """Get a view by name"""
+        """Get a view by name."""
         return self.views[view_name]["view"]
 
     def get_all_views(self):
-        """Get all views"""
+        """Get all views."""
         return {name: info["view"] for name, info in self.views.items()}
 
     def get_visible_views(self):
-        """Get all visible views"""
+        """Get all visible views."""
         return {
             name: info["view"] for name, info in self.views.items() if info["visible"]
         }

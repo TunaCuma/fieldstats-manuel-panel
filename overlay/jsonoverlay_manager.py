@@ -89,7 +89,7 @@ class JSONOverlayManager:
         )
 
     def update_view_sizes(self):
-        """Update scaling factors based on the actual video display area"""
+        """Update scaling factors based on the actual video display area."""
         # For transformed view - use actual_video_rect if available
         if hasattr(self.player.transform_view, "actual_video_rect"):
             rect = self.player.transform_view.actual_video_rect
@@ -205,7 +205,7 @@ class JSONOverlayManager:
             self.overlay_updater.update_detached_right_overlays(right_objects)
 
     def show_object_info(self, obj_info):
-        """Display information about the clicked object"""
+        """Display information about the clicked object."""
         source = "Left Field" if obj_info["src"] == 0 else "Right Field"
         # Display adjusted position for right field objects in topdown view
         x_position = obj_info["t_c"][0]

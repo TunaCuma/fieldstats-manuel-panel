@@ -5,13 +5,13 @@ from .custom_rect_item import CustomRectItem
 
 
 class OverlayCreator:
-    """Responsible for creating overlay rectangles for different views"""
+    """Responsible for creating overlay rectangles for different views."""
 
     def __init__(self, manager):
         self.manager = manager
 
     def create_overlays(self):
-        """Create overlay rectangles for all views"""
+        """Create overlay rectangles for all views."""
         self.create_topdown_overlays()
         self.create_left_overlays()
         self.create_right_overlays()
@@ -31,7 +31,7 @@ class OverlayCreator:
             rect.setVisible(False)
 
     def create_left_overlays(self):
-        """Create overlays for left field view"""
+        """Create overlays for left field view."""
         max_overlays = 30
 
         for _ in range(max_overlays):
@@ -45,7 +45,7 @@ class OverlayCreator:
             rect.setVisible(False)
 
     def create_right_overlays(self):
-        """Create overlays for right field view"""
+        """Create overlays for right field view."""
         max_overlays = 30
 
         for _ in range(max_overlays):

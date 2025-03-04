@@ -11,7 +11,8 @@ from PyQt6.QtWidgets import (
 
 
 class VideoControls(QWidget):
-    """A widget providing streamlined video playback controls in a single row"""
+    """A widget providing streamlined video playback controls in a single
+    row."""
 
     playPauseClicked = pyqtSignal()
     stopClicked = pyqtSignal()
@@ -105,7 +106,7 @@ class VideoControls(QWidget):
         QTimer.singleShot(0, self.play_btn.setFocus)
 
     def go_to_frame(self):
-        """Process go to frame request"""
+        """Process go to frame request."""
         try:
             frame_num = int(self.frame_input.text())
             self.goToFrameRequested.emit(frame_num)
@@ -114,13 +115,13 @@ class VideoControls(QWidget):
             self.click_info_label.setText("Please enter a valid frame number")
 
     def update_frame_info(self, current_frame, total_frames, fps):
-        """Update frame information display"""
+        """Update frame information display."""
         self.current_frame_label.setText(f"Current Frame: {current_frame}")
         self.total_frames_label.setText(f"Total Frames: {total_frames}")
         self.fps_label.setText(f"FPS: {fps:.2f}")
 
     def update_position_slider(self, position, duration):
-        """Update position slider value without triggering signals"""
+        """Update position slider value without triggering signals."""
         if not self.position_slider.isSliderDown():
             self.position_slider.setValue(position)
 
@@ -128,7 +129,7 @@ class VideoControls(QWidget):
             self.position_slider.setRange(0, duration)
 
     def set_play_icon(self, is_playing):
-        """Update play/pause button icon based on state"""
+        """Update play/pause button icon based on state."""
         if is_playing:
             self.play_btn.setIcon(
                 self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause)
@@ -139,6 +140,6 @@ class VideoControls(QWidget):
             )
 
     def showEvent(self, event):
-        """Override showEvent to set focus when the widget is shown"""
+        """Override showEvent to set focus when the widget is shown."""
         super().showEvent(event)
         self.play_btn.setFocus()

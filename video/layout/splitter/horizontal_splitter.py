@@ -5,7 +5,7 @@ from .styles import Styles
 
 
 class HorizontalSplitterManager:
-    """Manages horizontal splitting for left and right views"""
+    """Manages horizontal splitting for left and right views."""
 
     def __init__(self):
         # Create horizontal splitter for left and right views
@@ -24,40 +24,41 @@ class HorizontalSplitterManager:
         self.right_view = None
 
     def get_splitter(self):
-        """Returns the horizontal splitter widget"""
+        """Returns the horizontal splitter widget."""
         return self.splitter
 
     def add_left_view(self, view):
-        """Add view to the left side of the horizontal splitter"""
+        """Add view to the left side of the horizontal splitter."""
         self.splitter.addWidget(view)
         self.left_view = view
 
     def add_right_view(self, view):
-        """Add view to the right side of the horizontal splitter and save initial sizes"""
+        """Add view to the right side of the horizontal splitter and save
+        initial sizes."""
         self.splitter.addWidget(view)
         self.right_view = view
         self.last_sizes = self.splitter.sizes()
 
     def save_sizes(self):
-        """Save current sizes of the splitter"""
+        """Save current sizes of the splitter."""
         self.last_sizes = self.splitter.sizes()
         return self.last_sizes
 
     def get_sizes(self):
-        """Get current sizes of the splitter"""
+        """Get current sizes of the splitter."""
         return self.splitter.sizes()
 
     def set_sizes(self, sizes):
-        """Set sizes of the splitter"""
+        """Set sizes of the splitter."""
         self.splitter.setSizes(sizes)
 
     def restore_saved_sizes(self):
-        """Restore previously saved sizes"""
+        """Restore previously saved sizes."""
         if self.last_sizes:
             self.splitter.setSizes(self.last_sizes)
 
     def handle_view_visibility(self, view_name, is_visible, views):
-        """Respond to view visibility changes and adjust layout"""
+        """Respond to view visibility changes and adjust layout."""
         # Skip if no last sizes available
         if not self.last_sizes:
             return

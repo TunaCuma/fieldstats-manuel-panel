@@ -9,12 +9,14 @@ from matplotlib.widgets import Button, Slider
 
 
 def visualize_tracking_data(json_path, video_path=None, confidence_threshold=0.1):
-    """
-    Visualize tracking data from a JSON file and optionally overlay it on video frames.
+    """Visualize tracking data from a JSON file and optionally overlay it on
+    video frames.
 
     :param json_path: Path to the JSON file with tracking data.
-    :param video_path: Path to the video file (optional, enables overlay if provided).
-    :param confidence_threshold: Minimum confidence score to display objects (default 0.1).
+    :param video_path: Path to the video file (optional, enables overlay
+        if provided).
+    :param confidence_threshold: Minimum confidence score to display
+        objects (default 0.1).
     """
     # Load tracking data from JSON
     with open(json_path) as json_file:

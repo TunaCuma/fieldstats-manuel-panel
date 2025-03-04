@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QMenu
 
 
 def create_video_view_context_menu(video_view):
-    """Create context menu for video view"""
+    """Create context menu for video view."""
     context_menu = QMenu(video_view)
 
     # Add actions

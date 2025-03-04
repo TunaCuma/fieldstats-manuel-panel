@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (
 
 
 class DetachedVideoWindow(QMainWindow):
-    """A window for displaying detached video views"""
+    """A window for displaying detached video views."""
 
     closed = pyqtSignal()
     videoResized = pyqtSignal()
@@ -63,18 +63,20 @@ class DetachedVideoWindow(QMainWindow):
         self.init_timer.start(100)  # Short delay after UI setup
 
     def initial_update(self):
-        """Force an initial update to ensure video sizes and overlays are correct"""
+        """Force an initial update to ensure video sizes and overlays are
+        correct."""
         self.update_video_size()
         self.videoResized.emit()
 
     def resizeEvent(self, event):
-        """Handle resize events to maintain proper video scaling"""
+        """Handle resize events to maintain proper video scaling."""
         super().resizeEvent(event)
         self.update_video_size()
         self.videoResized.emit()
 
     def update_video_size(self):
-        """Update video size while maintaining aspect ratio and tracking for overlays"""
+        """Update video size while maintaining aspect ratio and tracking for
+        overlays."""
         view_size = self.view.size()
         self.scene.setSceneRect(0, 0, view_size.width(), view_size.height())
 
@@ -132,6 +134,6 @@ class DetachedVideoWindow(QMainWindow):
                 self.parent_view.parent().viewResized.emit()
 
     def closeEvent(self, event):
-        """Handle window close event to notify parent"""
+        """Handle window close event to notify parent."""
         self.closed.emit()
         super().closeEvent(event)

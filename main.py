@@ -9,7 +9,7 @@ from video.video_player import VideoPlayer
 
 
 def set_dark_mode(app):
-    """Apply dark mode styling to the application"""
+    """Apply dark mode styling to the application."""
     app.setStyle("Fusion")
     palette = QPalette()
     palette.setColor(QPalette.ColorRole.Window, QColor(53, 53, 53))
@@ -27,7 +27,7 @@ def set_dark_mode(app):
 
 
 def check_video_files():
-    """Check if required video files exist and return their paths"""
+    """Check if required video files exist and return their paths."""
     input_folder = "input"
 
     transform_video = os.path.join(input_folder, "topdown.webm")

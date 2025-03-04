@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QMenu
 
 
 class LayoutMenu:
-    """Handles the layout menu functionality"""
+    """Handles the layout menu functionality."""
 
     def __init__(self, menu_button, view_tracker, splitter_manager):
         self.menu_button = menu_button
@@ -13,7 +13,7 @@ class LayoutMenu:
         self.menu_button.clicked.connect(self.show_layout_menu)
 
     def show_layout_menu(self):
-        """Show layout customization menu with view toggle options"""
+        """Show layout customization menu with view toggle options."""
         menu = QMenu(self.menu_button)
         menu.setStyleSheet(
             """
@@ -78,7 +78,7 @@ class LayoutMenu:
         menu.exec(self.menu_button.mapToGlobal(self.menu_button.rect().bottomLeft()))
 
     def toggle_view_visibility(self, view_name, should_be_visible):
-        """Toggle visibility of a specific view from the menu"""
+        """Toggle visibility of a specific view from the menu."""
         view = self.view_tracker.get_view(view_name)
 
         # Only act if the visibility state is changing
@@ -86,7 +86,7 @@ class LayoutMenu:
             view.toggle_visibility()
 
     def apply_layout_preset(self, preset):
-        """Apply a layout preset"""
+        """Apply a layout preset."""
         # Make sure views are shown if they were hidden
         for view_name in ["left", "right", "transform"]:
             view = self.view_tracker.get_view(view_name)

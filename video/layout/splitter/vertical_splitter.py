@@ -5,7 +5,7 @@ from .styles import Styles
 
 
 class VerticalSplitterManager:
-    """Manages vertical splitting for top and bottom views"""
+    """Manages vertical splitting for top and bottom views."""
 
     def __init__(self):
         # Create main vertical splitter
@@ -37,45 +37,45 @@ class VerticalSplitterManager:
         self.last_sizes = [300, 300]
 
     def get_splitter(self):
-        """Returns the vertical splitter widget"""
+        """Returns the vertical splitter widget."""
         return self.splitter
 
     def get_top_layout(self):
-        """Returns the top layout for adding widgets"""
+        """Returns the top layout for adding widgets."""
         return self.top_layout
 
     def get_bottom_layout(self):
-        """Returns the bottom layout for adding widgets"""
+        """Returns the bottom layout for adding widgets."""
         return self.bottom_layout
 
     def add_to_top(self, widget):
-        """Add widget to the top container"""
+        """Add widget to the top container."""
         self.top_layout.addWidget(widget)
 
     def add_to_bottom(self, widget):
-        """Add widget to the bottom container"""
+        """Add widget to the bottom container."""
         self.bottom_layout.addWidget(widget)
 
     def save_sizes(self):
-        """Save current sizes of the splitter"""
+        """Save current sizes of the splitter."""
         self.last_sizes = self.splitter.sizes()
         return self.last_sizes
 
     def get_sizes(self):
-        """Get current sizes of the splitter"""
+        """Get current sizes of the splitter."""
         return self.splitter.sizes()
 
     def set_sizes(self, sizes):
-        """Set sizes of the splitter"""
+        """Set sizes of the splitter."""
         self.splitter.setSizes(sizes)
 
     def restore_saved_sizes(self):
-        """Restore previously saved sizes"""
+        """Restore previously saved sizes."""
         if self.last_sizes:
             self.splitter.setSizes(self.last_sizes)
 
     def handle_view_visibility(self, view_name, is_visible, views):
-        """Respond to view visibility changes and adjust vertical layout"""
+        """Respond to view visibility changes and adjust vertical layout."""
         # Get the indices of the containers in the splitter
         top_idx = self.splitter.indexOf(self.top_container)
         bottom_idx = self.splitter.indexOf(self.bottom_container)

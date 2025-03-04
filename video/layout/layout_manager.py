@@ -7,7 +7,7 @@ from .view_tracker import ViewTracker
 
 
 class LayoutManager(QWidget):
-    """Manages the layout of video views with splitters for resizing"""
+    """Manages the layout of video views with splitters for resizing."""
 
     viewResized = pyqtSignal()
 
@@ -74,7 +74,7 @@ class LayoutManager(QWidget):
         self.layout.insertWidget(0, self.menu_container)
 
     def add_left_view(self, view):
-        """Add view to the left side of the horizontal splitter"""
+        """Add view to the left side of the horizontal splitter."""
         self.splitter_manager.add_left_view(view)
         self.connect_view_signals(view, "left")
         self.view_tracker.register_view(
@@ -82,7 +82,7 @@ class LayoutManager(QWidget):
         )
 
     def add_right_view(self, view):
-        """Add view to the right side of the horizontal splitter"""
+        """Add view to the right side of the horizontal splitter."""
         self.splitter_manager.add_right_view(view)
         self.connect_view_signals(view, "right")
         self.view_tracker.register_view(
@@ -90,7 +90,7 @@ class LayoutManager(QWidget):
         )
 
     def add_transform_view(self, view):
-        """Add view to the bottom container"""
+        """Add view to the bottom container."""
         self.splitter_manager.add_transform_view(view)
         self.connect_view_signals(view, "transform")
         self.view_tracker.register_view(
@@ -98,7 +98,7 @@ class LayoutManager(QWidget):
         )
 
     def connect_view_signals(self, view, view_name):
-        """Connect signals from a view to our handlers"""
+        """Connect signals from a view to our handlers."""
         view.toggledVisibility.connect(
             lambda visible: self.handle_view_visibility(view_name, visible)
         )
@@ -106,17 +106,17 @@ class LayoutManager(QWidget):
         view.reattachRequested.connect(lambda: self.handle_view_reattach(view_name))
 
     def handle_view_detach(self, view_name):
-        """Handle when a view is detached to separate window"""
+        """Handle when a view is detached to separate window."""
         self.splitter_manager.handle_view_detach(view_name, self.view_tracker.views)
         self.viewResized.emit()
 
     def handle_view_reattach(self, view_name):
-        """Handle when a view is reattached from separate window"""
+        """Handle when a view is reattached from separate window."""
         self.splitter_manager.handle_view_reattach(view_name)
         self.viewResized.emit()
 
     def handle_view_visibility(self, view_name, is_visible):
-        """Respond to view visibility changes and adjust layout"""
+        """Respond to view visibility changes and adjust layout."""
         self.view_tracker.update_visibility(view_name, is_visible)
         self.splitter_manager.handle_view_visibility(
             view_name, is_visible, self.view_tracker.views
