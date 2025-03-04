@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 from PyQt6.QtCore import pyqtSignal
 
-from .splitter_manager import SplitterManager
+from .splitter.splitter_manager import SplitterManager
 from .view_tracker import ViewTracker
 from .layout_menu import LayoutMenu
 
