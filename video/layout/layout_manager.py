@@ -103,16 +103,18 @@ class LayoutManager(QWidget):
             lambda visible: self.handle_view_visibility(view_name, visible)
         )
         view.detachRequested.connect(lambda: self.handle_view_detach(view_name))
-        view.reattachRequested.connect(lambda: self.handle_view_reattach(view_name))
+        view.reattachRequested.connect(
+            lambda: self.handle_view_reattach(view_name, self.view_tracker.views)
+        )
 
     def handle_view_detach(self, view_name):
         """Handle when a view is detached to separate window."""
         self.splitter_manager.handle_view_detach(view_name, self.view_tracker.views)
         self.viewResized.emit()
 
-    def handle_view_reattach(self, view_name):
+    def handle_view_reattach(self, view_name, views):
         """Handle when a view is reattached from separate window."""
-        self.splitter_manager.handle_view_reattach(view_name)
+        self.splitter_manager.handle_view_reattach(view_name, views)
         self.viewResized.emit()
 
     def handle_view_visibility(self, view_name, is_visible):
