@@ -1,5 +1,6 @@
-from PyQt6.QtGui import QBrush, QColor, QPen
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QBrush, QColor, QPen
+
 from .custom_rect_item import CustomRectItem
 
 
@@ -63,8 +64,7 @@ class DetachedOverlayManager:
             orange_pen = QPen(QColor("orange"), 3)
             rect.setPen(orange_pen)
             self.manager.detached_topdown_overlays.append(rect)
-            self.manager.player.transform_view.detached_window.scene.addItem(
-                rect)
+            self.manager.player.transform_view.detached_window.scene.addItem(rect)
             rect.setVisible(False)
 
     def clean_detached_left_overlays(self):

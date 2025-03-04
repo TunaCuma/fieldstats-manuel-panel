@@ -1,10 +1,8 @@
 import json
-from PyQt6.QtGui import QBrush, QColor, QPen
-from PyQt6.QtCore import Qt
-from .custom_rect_item import CustomRectItem
+
+from .detached_overlay_manager import DetachedOverlayManager
 from .overlay_creator import OverlayCreator
 from .overlay_updater import OverlayUpdater
-from .detached_overlay_manager import DetachedOverlayManager
 
 
 class JSONOverlayManager:
@@ -47,7 +45,7 @@ class JSONOverlayManager:
         self.connect_signals()
 
     def load_json_data(self, json_path):
-        with open(json_path, "r") as f:
+        with open(json_path) as f:
             data = json.load(f)
 
         # Store video dimensions from metadata if available
@@ -55,17 +53,13 @@ class JSONOverlayManager:
             metadata = data["metadata"]
             if "width" in metadata and "height" in metadata:
                 self.topdown_width = metadata.get("width", self.topdown_width)
-                self.topdown_height = metadata.get(
-                    "height", self.topdown_height)
+                self.topdown_height = metadata.get("height", self.topdown_height)
             if "field_width" in metadata and "field_height" in metadata:
-                self.field_width = metadata.get(
-                    "field_width", self.field_width)
-                self.field_height = metadata.get(
-                    "field_height", self.field_height)
+                self.field_width = metadata.get("field_width", self.field_width)
+                self.field_height = metadata.get("field_height", self.field_height)
 
         # Convert frames list to dictionary for faster lookup
-        self.frame_data = {frame["fr"]: frame["obj"]
-                           for frame in data["frames"]}
+        self.frame_data = {frame["fr"]: frame["obj"] for frame in data["frames"]}
 
     def connect_signals(self):
         self.player.viewResized.connect(self.update_view_sizes)
@@ -202,8 +196,7 @@ class JSONOverlayManager:
             self.player.transform_view.detached_window
             and self.detached_topdown_overlays
         ):
-            self.overlay_updater.update_detached_topdown_overlays(
-                transformed_objects)
+            self.overlay_updater.update_detached_topdown_overlays(transformed_objects)
 
         if self.player.left_view.detached_window and self.detached_left_overlays:
             self.overlay_updater.update_detached_left_overlays(left_objects)

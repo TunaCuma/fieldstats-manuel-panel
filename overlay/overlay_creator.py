@@ -1,5 +1,6 @@
-from PyQt6.QtGui import QBrush, QColor, QPen
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QBrush, QColor, QPen
+
 from .custom_rect_item import CustomRectItem
 
 

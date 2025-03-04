@@ -52,7 +52,7 @@ class OverlayUpdater:
                 obj = left_objects[idx]
 
                 # Get the direct video item position
-                video_rect = self.manager.player.left_view.video_item.boundingRect()
+                self.manager.player.left_view.video_item.boundingRect()
                 x_offset = self.manager.player.left_view.video_item.pos().x()
                 y_offset = self.manager.player.left_view.video_item.pos().y()
 
@@ -80,7 +80,7 @@ class OverlayUpdater:
                 obj = right_objects[idx]
 
                 # Get the direct video item position
-                video_rect = self.manager.player.right_view.video_item.boundingRect()
+                self.manager.player.right_view.video_item.boundingRect()
                 x_offset = self.manager.player.right_view.video_item.pos().x()
                 y_offset = self.manager.player.right_view.video_item.pos().y()
 
@@ -121,7 +121,7 @@ class OverlayUpdater:
                 obj = transformed_objects[idx]
 
                 # Get video item position
-                video_rect = detached_window.video_item.boundingRect()
+                detached_window.video_item.boundingRect()
                 x_offset = detached_window.video_item.pos().x()
                 y_offset = detached_window.video_item.pos().y()
 
@@ -167,7 +167,7 @@ class OverlayUpdater:
                 obj = left_objects[idx]
 
                 # Get video item position
-                video_rect = detached_window.video_item.boundingRect()
+                detached_window.video_item.boundingRect()
                 x_offset = detached_window.video_item.pos().x()
                 y_offset = detached_window.video_item.pos().y()
 
@@ -208,7 +208,7 @@ class OverlayUpdater:
                 obj = right_objects[idx]
 
                 # Get video item position
-                video_rect = detached_window.video_item.boundingRect()
+                detached_window.video_item.boundingRect()
                 x_offset = detached_window.video_item.pos().x()
                 y_offset = detached_window.video_item.pos().y()
 

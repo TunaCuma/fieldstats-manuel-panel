@@ -29,7 +29,7 @@ def generate_diagrams(project_name="panel", source_path="."):
         print(f"Created directory: {diagrams_dir}")
 
     # Full path for output files
-    output_path = os.path.join(diagrams_dir, project_name)
+    os.path.join(diagrams_dir, project_name)
 
     # Run pyreverse command for PNG output (normal version)
     cmd_png = [
@@ -86,31 +86,24 @@ def generate_diagrams(project_name="panel", source_path="."):
 
     try:
         # Generate standard PNG diagrams
-        result_png = subprocess.run(
-            cmd_png, check=True, capture_output=True, text=True)
+        result_png = subprocess.run(cmd_png, check=True, capture_output=True, text=True)
         print("\n✅ Standard PNG diagrams generated:")
         print(f"  - Class diagram: {diagrams_dir}/classes_{project_name}.png")
-        print(
-            f"  - Package diagram: {diagrams_dir}/packages_{project_name}.png")
+        print(f"  - Package diagram: {diagrams_dir}/packages_{project_name}.png")
 
         # Generate simplified PNG diagrams (-k option)
         result_png_k = subprocess.run(
             cmd_png_k, check=True, capture_output=True, text=True
         )
         print("\n✅ Simplified PNG diagrams generated (-k option):")
-        print(
-            f"  - Class diagram: {diagrams_dir}/classes_{project_name}_simple.png")
-        print(
-            f"  - Package diagram: {diagrams_dir}/packages_{project_name}_simple.png")
+        print(f"  - Class diagram: {diagrams_dir}/classes_{project_name}_simple.png")
+        print(f"  - Package diagram: {diagrams_dir}/packages_{project_name}_simple.png")
 
         # Generate standard DOT text files
-        result_dot = subprocess.run(
-            cmd_dot, check=True, capture_output=True, text=True)
+        result_dot = subprocess.run(cmd_dot, check=True, capture_output=True, text=True)
         print("\n✅ Standard DOT files generated:")
-        print(
-            f"  - Class diagram (text): {diagrams_dir}/classes_{project_name}.dot")
-        print(
-            f"  - Package diagram (text): {diagrams_dir}/packages_{project_name}.dot")
+        print(f"  - Class diagram (text): {diagrams_dir}/classes_{project_name}.dot")
+        print(f"  - Package diagram (text): {diagrams_dir}/packages_{project_name}.dot")
 
         # Generate simplified DOT text files (-k option)
         result_dot_k = subprocess.run(

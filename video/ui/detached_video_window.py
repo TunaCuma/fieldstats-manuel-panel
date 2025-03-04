@@ -1,14 +1,14 @@
+from PyQt6.QtCore import QSizeF, Qt, QTimer, pyqtSignal
+from PyQt6.QtMultimediaWidgets import QGraphicsVideoItem
 from PyQt6.QtWidgets import (
-    QMainWindow,
-    QVBoxLayout,
-    QWidget,
+    QFrame,
     QGraphicsScene,
     QGraphicsView,
     QLabel,
-    QFrame,
+    QMainWindow,
+    QVBoxLayout,
+    QWidget,
 )
-from PyQt6.QtMultimediaWidgets import QGraphicsVideoItem
-from PyQt6.QtCore import Qt, QSizeF, pyqtSignal, QTimer
 
 
 class DetachedVideoWindow(QMainWindow):

@@ -1,5 +1,6 @@
-from PyQt6.QtWidgets import QSplitter, QWidget, QVBoxLayout
 from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QSplitter, QVBoxLayout, QWidget
+
 from .styles import Styles
 
 

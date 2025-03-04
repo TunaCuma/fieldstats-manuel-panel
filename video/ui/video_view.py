@@ -1,8 +1,8 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QSizePolicy
 from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QSizePolicy, QVBoxLayout, QWidget
 
-from .video_header import VideoHeader
 from .video_content import VideoContent
+from .video_header import VideoHeader
 
 
 class VideoView(QWidget):
@@ -40,9 +40,7 @@ class VideoView(QWidget):
         self.layout.addWidget(self.content)
 
         # Setup sizing policy
-        self.setSizePolicy(
-            QSizePolicy.Policy.Expanding,
-            QSizePolicy.Policy.Expanding)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
     def show_context_menu(self, pos):
         """Show context menu for the video view"""
@@ -66,9 +64,7 @@ class VideoView(QWidget):
             )
             self.setMinimumSize(100, 100)
         else:
-            self.setSizePolicy(
-                QSizePolicy.Policy.Ignored,
-                QSizePolicy.Policy.Minimum)
+            self.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Minimum)
             self.setMinimumSize(0, self.header.height())
 
         # Emit signal for parent containers to adjust
@@ -91,9 +87,7 @@ class VideoView(QWidget):
             self.header.disable_detach_button()
 
             # Set minimal size to just the header
-            self.setSizePolicy(
-                QSizePolicy.Policy.Ignored,
-                QSizePolicy.Policy.Minimum)
+            self.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Minimum)
             self.setMinimumSize(0, self.header.height())
 
             # Signal to parent VideoPlayer

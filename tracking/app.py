@@ -20,14 +20,12 @@ def update_data(data):
 
     # Validate the received data
     if coord_id is None or frame_id is None:
-        return {
-            "error": "Missing one or more required parameters: coord_id, frame_id"}
+        return {"error": "Missing one or more required parameters: coord_id, frame_id"}
 
     try:
         # Call the update function from tracker. It is assumed to return:
         # (lost_frame_id, lost_ids, tracking_response)
-        lost_frame_id, lost_ids, tracking_response = tracker.update(
-            frame_id, coord_id)
+        lost_frame_id, lost_ids, tracking_response = tracker.update(frame_id, coord_id)
     except Exception as e:
         return {"error": str(e)}
 
@@ -39,7 +37,4 @@ def update_data(data):
         tracks = tracking_response
 
     # Return the combined response as a dictionary
-    return {
-        "lost_frame_id": lost_frame_id,
-        "tracks": tracks,
-        "lost_ids": lost_ids}
+    return {"lost_frame_id": lost_frame_id, "tracks": tracks, "lost_ids": lost_ids}

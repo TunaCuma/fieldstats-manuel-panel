@@ -1,5 +1,5 @@
-from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtCore import QUrl
+from PyQt6.QtMultimedia import QMediaPlayer
 
 
 class MediaHandler:

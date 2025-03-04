@@ -1,11 +1,11 @@
+import json
 import os
 import sys
-import json
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
+
 import cv2
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
 from matplotlib.widgets import Button, Slider
-import matplotlib as mpl
 
 
 def visualize_tracking_data(json_path, video_path=None, confidence_threshold=0.1):
@@ -17,7 +17,7 @@ def visualize_tracking_data(json_path, video_path=None, confidence_threshold=0.1
     :param confidence_threshold: Minimum confidence score to display objects (default 0.1).
     """
     # Load tracking data from JSON
-    with open(json_path, "r") as json_file:
+    with open(json_path) as json_file:
         tracking_data = json.load(json_file)
 
     # Known classes and assigned distinct colors

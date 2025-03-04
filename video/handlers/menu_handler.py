@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QMenuBar, QMenu
 from PyQt6.QtGui import QAction
+from PyQt6.QtWidgets import QMenu, QMenuBar
 
 
 class MenuHandler:

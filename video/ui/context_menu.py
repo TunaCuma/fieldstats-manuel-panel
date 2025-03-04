@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QMenu
 from PyQt6.QtGui import QAction
+from PyQt6.QtWidgets import QMenu
 
 
 def create_video_view_context_menu(video_view):

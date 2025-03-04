@@ -1,9 +1,9 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
+from .layout_menu import LayoutMenu
 from .splitter.splitter_manager import SplitterManager
 from .view_tracker import ViewTracker
-from .layout_menu import LayoutMenu
 
 
 class LayoutManager(QWidget):
@@ -102,15 +102,12 @@ class LayoutManager(QWidget):
         view.toggledVisibility.connect(
             lambda visible: self.handle_view_visibility(view_name, visible)
         )
-        view.detachRequested.connect(
-            lambda: self.handle_view_detach(view_name))
-        view.reattachRequested.connect(
-            lambda: self.handle_view_reattach(view_name))
+        view.detachRequested.connect(lambda: self.handle_view_detach(view_name))
+        view.reattachRequested.connect(lambda: self.handle_view_reattach(view_name))
 
     def handle_view_detach(self, view_name):
         """Handle when a view is detached to separate window"""
-        self.splitter_manager.handle_view_detach(
-            view_name, self.view_tracker.views)
+        self.splitter_manager.handle_view_detach(view_name, self.view_tracker.views)
         self.viewResized.emit()
 
     def handle_view_reattach(self, view_name):

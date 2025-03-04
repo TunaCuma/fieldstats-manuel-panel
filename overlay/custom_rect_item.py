@@ -1,6 +1,6 @@
-from PyQt6.QtWidgets import QGraphicsRectItem
-from PyQt6.QtGui import QPen, QColor
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QColor, QPen
+from PyQt6.QtWidgets import QGraphicsRectItem
 
 
 class CustomRectItem(QGraphicsRectItem):

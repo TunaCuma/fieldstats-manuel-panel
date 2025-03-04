@@ -1,13 +1,13 @@
+from PyQt6.QtCore import QSizeF, Qt
+from PyQt6.QtMultimediaWidgets import QGraphicsVideoItem
 from PyQt6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
+    QFrame,
     QGraphicsScene,
     QGraphicsView,
     QSizePolicy,
-    QFrame,
+    QVBoxLayout,
+    QWidget,
 )
-from PyQt6.QtCore import Qt, QSizeF
-from PyQt6.QtMultimediaWidgets import QGraphicsVideoItem
 
 
 class VideoContent(QWidget):
@@ -15,12 +15,7 @@ class VideoContent(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.actual_video_rect = {
-            "x": 0,
-            "y": 0,
-            "width": 0,
-            "height": 0,
-            "scale": 1.0}
+        self.actual_video_rect = {"x": 0, "y": 0, "width": 0, "height": 0, "scale": 1.0}
         self.setupUI()
 
     def setupUI(self):
@@ -32,12 +27,9 @@ class VideoContent(QWidget):
         # Graphics view for video
         self.scene = QGraphicsScene()
         self.view = QGraphicsView(self.scene)
-        self.view.setStyleSheet(
-            "background-color: black; padding: 0px; margin: 0px;")
-        self.view.setHorizontalScrollBarPolicy(
-            Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.view.setVerticalScrollBarPolicy(
-            Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.view.setStyleSheet("background-color: black; padding: 0px; margin: 0px;")
+        self.view.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.view.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.view.setSizePolicy(
             QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
         )
@@ -100,10 +92,7 @@ class VideoContent(QWidget):
             }
         else:
             # If no valid video size, set to view size and position at origin
-            self.video_item.setSize(
-                QSizeF(
-                    view_size.width(),
-                    view_size.height()))
+            self.video_item.setSize(QSizeF(view_size.width(), view_size.height()))
             self.video_item.setPos(0, 0)
 
             # In this case, overlay should use the full view

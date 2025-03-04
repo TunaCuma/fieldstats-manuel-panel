@@ -72,7 +72,7 @@ class PlaybackController:
                 self.controls.update_frame_info(
                     self.current_frame, self.total_frames, self.fps
                 )
-        except Exception as e:
+        except Exception:
             # Silently handle any errors during UI update
             pass
 

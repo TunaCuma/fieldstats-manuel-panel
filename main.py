@@ -1,9 +1,11 @@
-import sys
 import os
+import sys
+
+from PyQt6.QtGui import QColor, QPalette
 from PyQt6.QtWidgets import QApplication, QMessageBox
-from PyQt6.QtGui import QPalette, QColor
-from video import VideoPlayer
+
 from overlay import JSONOverlayManager
+from video import VideoPlayer
 
 
 def set_dark_mode(app):
@@ -76,7 +78,7 @@ def main():
     )
 
     # Initialize overlay manager with JSON data
-    overlay_manager = JSONOverlayManager(player, files["json"])
+    JSONOverlayManager(player, files["json"])
 
     player.show()
     return app.exec()

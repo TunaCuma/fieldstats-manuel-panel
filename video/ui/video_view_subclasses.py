@@ -1,4 +1,5 @@
 from PyQt6.QtCore import pyqtSignal
+
 from .video_view import VideoView
 
 

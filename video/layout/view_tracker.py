@@ -32,5 +32,6 @@ class ViewTracker:
 
     def get_visible_views(self):
         """Get all visible views"""
-        return {name: info["view"] for name,
-                info in self.views.items() if info["visible"]}
+        return {
+            name: info["view"] for name, info in self.views.items() if info["visible"]
+        }

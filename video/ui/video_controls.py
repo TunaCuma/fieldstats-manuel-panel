@@ -1,13 +1,13 @@
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 from PyQt6.QtWidgets import (
-    QWidget,
     QHBoxLayout,
     QLabel,
-    QPushButton,
     QLineEdit,
-    QStyle,
+    QPushButton,
     QSlider,
+    QStyle,
+    QWidget,
 )
-from PyQt6.QtCore import QTimer, pyqtSignal, Qt
 
 
 class VideoControls(QWidget):

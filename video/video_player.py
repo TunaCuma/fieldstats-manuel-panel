@@ -1,24 +1,21 @@
-import os
+from PyQt6.QtCore import QTimer, pyqtSignal
 from PyQt6.QtWidgets import (
     QMainWindow,
-    QWidget,
-    QVBoxLayout,
-    QFileDialog,
     QStatusBar,
-    QMenuBar,
+    QVBoxLayout,
+    QWidget,
 )
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 
-from .layout.layout_manager import LayoutManager
-from .utils.media_synchronizer import MediaSynchronizer
-from .ui.video_controls import VideoControls
-from .ui.video_view_subclasses import LeftFieldView, RightFieldView, TransformView
-from .handlers.menu_handler import MenuHandler
 from .handlers.media_handler import MediaHandler
-from .handlers.view_handler import ViewHandler
+from .handlers.menu_handler import MenuHandler
 from .handlers.playback_controller import PlaybackController
+from .handlers.view_handler import ViewHandler
+from .layout.layout_manager import LayoutManager
 from .player.video_player_property_bridge import VideoPlayerPropertyBridge
 from .player.video_player_signal_connector import VideoPlayerSignalConnector
+from .ui.video_controls import VideoControls
+from .ui.video_view_subclasses import LeftFieldView, RightFieldView, TransformView
+from .utils.media_synchronizer import MediaSynchronizer
 
 
 class VideoPlayer(QMainWindow):
@@ -111,9 +108,8 @@ class VideoPlayer(QMainWindow):
         )
 
         self.menu_handler = MenuHandler(
-            self,
-            self.media_handler.open_videos,
-            self.media_handler.open_project)
+            self, self.media_handler.open_videos, self.media_handler.open_project
+        )
 
         self.view_handler = ViewHandler(
             self.left_view,

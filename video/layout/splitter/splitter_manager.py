@@ -1,7 +1,7 @@
 from .horizontal_splitter import HorizontalSplitterManager
-from .vertical_splitter import VerticalSplitterManager
 from .layout_preset_manager import LayoutPresetManager
 from .styles import Styles
+from .vertical_splitter import VerticalSplitterManager
 
 
 class SplitterManager:
@@ -19,8 +19,7 @@ class SplitterManager:
 
         # Add the horizontal splitter to the top container of the vertical
         # splitter
-        self.vertical_manager.add_to_top(
-            self.horizontal_manager.get_splitter())
+        self.vertical_manager.add_to_top(self.horizontal_manager.get_splitter())
 
         # Create the layout preset manager
         self.layout_manager = LayoutPresetManager(
@@ -72,8 +71,7 @@ class SplitterManager:
 
             # Get the current view dictionary and delegate to horizontal
             # manager
-            self.horizontal_manager.handle_view_visibility(
-                view_name, False, views)
+            self.horizontal_manager.handle_view_visibility(view_name, False, views)
 
         # Handle vertical splitter for transform view
         elif view_name == "transform":
@@ -87,8 +85,7 @@ class SplitterManager:
             views_copy["transform"]["visible"] = False
 
             # Delegate to vertical manager
-            self.vertical_manager.handle_view_visibility(
-                view_name, False, views_copy)
+            self.vertical_manager.handle_view_visibility(view_name, False, views_copy)
 
     def handle_view_reattach(self, view_name, views):
         """Handle when a view is reattached from separate window"""
@@ -98,13 +95,11 @@ class SplitterManager:
 
         # Restore the appropriate splitter
         if view_name in ["left", "right"]:
-            self.horizontal_manager.handle_view_visibility(
-                view_name, True, views_copy)
+            self.horizontal_manager.handle_view_visibility(view_name, True, views_copy)
             # Update the compatibility property
             self.last_horizontal_sizes = self.horizontal_manager.last_sizes
         elif view_name == "transform":
-            self.vertical_manager.handle_view_visibility(
-                view_name, True, views_copy)
+            self.vertical_manager.handle_view_visibility(view_name, True, views_copy)
             # Update the compatibility property
             self.last_vertical_sizes = self.vertical_manager.last_sizes
 
@@ -112,14 +107,12 @@ class SplitterManager:
         """Respond to view visibility changes and adjust layout"""
         # For horizontal views, delegate to horizontal manager
         if view_name in ["left", "right"]:
-            self.horizontal_manager.handle_view_visibility(
-                view_name, is_visible, views)
+            self.horizontal_manager.handle_view_visibility(view_name, is_visible, views)
             # Update the compatibility property
             self.last_horizontal_sizes = self.horizontal_manager.last_sizes
 
         # Always update vertical manager for any visibility change
-        self.vertical_manager.handle_view_visibility(
-            view_name, is_visible, views)
+        self.vertical_manager.handle_view_visibility(view_name, is_visible, views)
         # Update the compatibility property
         self.last_vertical_sizes = self.vertical_manager.last_sizes
 

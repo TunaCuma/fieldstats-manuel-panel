@@ -1,10 +1,10 @@
 from PyQt6.QtWidgets import (
+    QCheckBox,
     QDialog,
-    QVBoxLayout,
     QHBoxLayout,
     QLabel,
-    QCheckBox,
     QPushButton,
+    QVBoxLayout,
 )
 
 
@@ -50,22 +50,19 @@ class ViewHandler:
         """Handle left view detach request"""
         if self.left_view.detached_window:
             self.left_view.set_detached_video_output(self.left_player)
-            self.status_bar.showMessage(
-                "Left field view detached to separate window")
+            self.status_bar.showMessage("Left field view detached to separate window")
 
     def handle_right_detach(self):
         """Handle right view detach request"""
         if self.right_view.detached_window:
             self.right_view.set_detached_video_output(self.right_player)
-            self.status_bar.showMessage(
-                "Right field view detached to separate window")
+            self.status_bar.showMessage("Right field view detached to separate window")
 
     def handle_transform_detach(self):
         """Handle transform view detach request"""
         if self.transform_view.detached_window:
             self.transform_view.set_detached_video_output(self.main_player)
-            self.status_bar.showMessage(
-                "Transform view detached to separate window")
+            self.status_bar.showMessage("Transform view detached to separate window")
 
     def handle_left_reattach(self):
         """Handle left view reattach request"""
@@ -166,11 +163,7 @@ class ViewHandler:
         layout.addLayout(button_layout)
         dialog.exec()
 
-    def apply_view_visibility(
-            self,
-            left_visible,
-            right_visible,
-            transform_visible):
+    def apply_view_visibility(self, left_visible, right_visible, transform_visible):
         """Apply visibility settings to all views"""
         # Only toggle if the state is different
         if self.is_left_visible != left_visible:

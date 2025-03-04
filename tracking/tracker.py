@@ -1,10 +1,9 @@
+import ast
 import json
-import os
-import sys
-import supervision as sv  # Includes ByteTrack implementation
+
 import matplotlib.pyplot as plt  # For plotting
 import numpy as np
-import ast
+import supervision as sv  # Includes ByteTrack implementation
 
 CHUNK_LENGTH = 1800
 
@@ -20,7 +19,7 @@ def update(start_frame, coord_ids):
     :return: A tuple (frame_index, lost_ids, tracking_result) where tracking_result is a JSON-like dict.
     """
     # Load original JSON from disk
-    with open("radon.json", "r") as f:
+    with open("radon.json") as f:
         input_data = json.load(f)
 
     # Find the start frame data
