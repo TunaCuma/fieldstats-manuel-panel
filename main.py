@@ -4,8 +4,8 @@ import sys
 from PyQt6.QtGui import QColor, QPalette
 from PyQt6.QtWidgets import QApplication, QMessageBox
 
-from overlay import JSONOverlayManager
-from video import VideoPlayer
+from overlay.jsonoverlay_manager import JSONOverlayManager
+from video.video_player import VideoPlayer
 
 
 def set_dark_mode(app):
