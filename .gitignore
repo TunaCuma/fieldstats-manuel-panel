@@ -1,5 +1,6 @@
 venv
 __pycache__
+diagrams/**/*
 
 **/*.mp4
 
