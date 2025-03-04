@@ -1,6 +1,6 @@
 class Styles:
     """Contains style definitions used across the application"""
-    
+
     # Splitter style
     SPLITTER_STYLE = """
         QSplitter::handle {
