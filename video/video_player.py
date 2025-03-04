@@ -2,16 +2,16 @@ import os
 from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QFileDialog, QStatusBar, QMenuBar
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 
-from .layout_manager import LayoutManager
-from .media_synchronizer import MediaSynchronizer
-from .video_controls import VideoControls
-from .video_view_subclasses import LeftFieldView, RightFieldView, TransformView
-from .menu_handler import MenuHandler
-from .media_handler import MediaHandler
-from .view_handler import ViewHandler
-from .playback_controller import PlaybackController
-from .video_player_property_bridge import VideoPlayerPropertyBridge
-from .video_player_signal_connector import VideoPlayerSignalConnector
+from .layout.layout_manager import LayoutManager
+from .utils.media_synchronizer import MediaSynchronizer
+from .ui.video_controls import VideoControls
+from .ui.video_view_subclasses import LeftFieldView, RightFieldView, TransformView
+from .handlers.menu_handler import MenuHandler
+from .handlers.media_handler import MediaHandler
+from .handlers.view_handler import ViewHandler
+from .handlers.playback_controller import PlaybackController
+from .player.video_player_property_bridge import VideoPlayerPropertyBridge
+from .player.video_player_signal_connector import VideoPlayerSignalConnector
 
 class VideoPlayer(QMainWindow):
     """
