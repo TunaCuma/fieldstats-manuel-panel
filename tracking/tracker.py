@@ -1,10 +1,10 @@
-import ast
 import json
 
 import matplotlib.pyplot as plt  # For plotting
 import numpy as np
 import supervision as sv  # Includes ByteTrack implementation
-from reverse_transform import reverse_transform_point
+
+from tracking.transform_utility import reverse_transform_point, transform_point
 
 CHUNK_LENGTH = 1800
 
@@ -34,29 +34,23 @@ def update(start_frame, coord_ids):
     start_map = {}  # {object_index: assigned_id}
     objects = start_frame_data.get("objects", [])
 
-    # For each provided coordinate-to-id mapping in coord_ids:
-    # The keys might be a list/tuple or a string representation, so we ensure conversion.
-    for coord, assigned_id in coord_ids.items():
-        # If coord is a string, parse it into a list of floats
-        if isinstance(coord, str):
-            try:
-                coord_parsed = ast.literal_eval(coord)
-            except Exception as e:
-                raise ValueError(f"Invalid coordinate format: {coord}") from e
-        else:
-            coord_parsed = coord
-
+    for mapping in coord_ids:
+        # mapping is expected to be a dict with keys "id", "c", and "src"
+        coord = transform_point(
+            mapping["c"], mapping["src"]
+        )  # This is a list like [x, y]
+        assigned_id = mapping["id"]  # The assigned id
         # Convert the coordinate into a tuple for comparison
-        coord_tuple = tuple(coord_parsed)
+        coord_tuple = tuple(coord)
         match_found = False
 
         for idx, obj in enumerate(objects):
             transformed_center = obj.get("transformed_center")
             if transformed_center is not None:
-                # If transformed_center is a list, convert it to a tuple
+                # Ensure transformed_center is a tuple for comparison
                 if isinstance(transformed_center, list):
                     transformed_center = tuple(transformed_center)
-                # Use np.allclose to compare with a small tolerance
+                # Use np.allclose with a small tolerance to compare coordinates
                 if np.allclose(transformed_center, coord_tuple, atol=1e-2):
                     start_map[idx] = assigned_id
                     match_found = True
@@ -379,6 +373,8 @@ def format_tracking_data(tracking_data):
                         del obj["confidence"]
                     obj["id"] = obj["track_id"]
                     del obj["track_id"]
+                    obj["cls_id"] = obj["class_id"]
+                    del obj["class_id"]
                     obj["c"] = new_center
                     obj["src"] = 1 if isRight else 0
                     if "bbox" in obj:

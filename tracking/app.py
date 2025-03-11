@@ -14,7 +14,7 @@ def update_data(data):
         return {"error": "No JSON payload provided"}
 
     # Extract the expected fields
-    coord_id = data.get("coord_id")
+    coord_id = data.get("coords")
     frame_id = data.get("frame_id")
 
     # Validate the received data

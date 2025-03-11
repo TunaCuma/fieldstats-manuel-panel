@@ -35,6 +35,48 @@ def reverse_transform_point(point):
     return isRight, [float(orig_point[0]), float(orig_point[1])]
 
 
+import numpy as np
+
+
+def transform_point(point, src):
+    """
+    Forward transforms a 2D point using one of two homography matrices.
+
+    For src=0, the function uses the homography matrix from "al2_homography_matrix.txt".
+    For src=1, it uses the homography matrix from "al1_homography_matrix.txt".
+    After applying the forward transformation, if src==1, 347 is added to the x-coordinate
+    of the resulting point.
+
+    Parameters:
+        point (list or tuple): The [x, y] coordinate to transform.
+        src (int): Source indicator. 0 means use "al2_homography_matrix.txt"; 1 means use "al1_homography_matrix.txt".
+
+    Returns:
+        new_point (list): The forward-transformed [x, y] coordinate. If src==1, the x value is increased by 347.
+    """
+    # Load the appropriate homography matrix based on src
+    H = (
+        np.loadtxt("al2_homography_matrix.txt")
+        if src == 0
+        else np.loadtxt("al1_homography_matrix.txt")
+    )
+
+    # Convert the input point to homogeneous coordinates
+    homogeneous_point = np.array([point[0], point[1], 1])
+
+    # Apply the forward transformation
+    transformed = H.dot(homogeneous_point)
+    transformed /= transformed[2]  # Normalize
+
+    new_point = [float(transformed[0]), float(transformed[1])]
+
+    # If src is 1, add 347 to the x-coordinate.
+    if src == 1:
+        new_point[0] += 347
+
+    return new_point
+
+
 # Example usage:
 # if __name__ == "__main__":
 #     with open("test.json", "r") as f:
