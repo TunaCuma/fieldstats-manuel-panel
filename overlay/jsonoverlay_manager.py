@@ -44,6 +44,11 @@ class JSONOverlayManager:
         self.overlay_creator.create_overlays()
         self.connect_signals()
 
+        # In JSONOverlayManager.__init__, add after other initializations:
+        from .tracking_overlay_manager import TrackingOverlayManager
+
+        self.tracking_manager = TrackingOverlayManager(self.player, self)
+
     def load_json_data(self, json_path):
         with open(json_path) as f:
             data = json.load(f)

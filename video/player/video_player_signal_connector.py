@@ -19,6 +19,40 @@ class VideoPlayerSignalConnector:
         self._connect_control_signals()
         self._connect_view_signals()
         self._connect_media_signals()
+        self.parent.controls.initTrackingClicked.connect(self.init_tracking)
+
+    def init_tracking(self):
+        """Initialize tracking with IDs from 1 to 23."""
+        # Check if JSON overlay manager is available
+        if hasattr(self, "json_overlay_manager") and self.json_overlay_manager:
+            if hasattr(self.json_overlay_manager, "tracking_manager"):
+                # Set up tracking overlays
+                self.json_overlay_manager.tracking_manager.setup_overlays()
+
+                # Initialize with IDs
+                response = (
+                    self.json_overlay_manager.tracking_manager.initialize_with_ids(23)
+                )
+
+                # Show result in status bar
+                if "error" in response:
+                    self.parent.statusBar.showMessage(
+                        f"Tracking error: {response['error']}"
+                    )
+                else:
+                    lost_frame = response.get("lost_frame_id")
+                    if lost_frame:
+                        self.parent.statusBar.showMessage(
+                            f"Tracking initialized. Lost frame found at: {lost_frame}"
+                        )
+                    else:
+                        self.parent.statusBar.showMessage(
+                            "Tracking initialized successfully"
+                        )
+            else:
+                self.parent.statusBar.showMessage("Tracking manager not available")
+        else:
+            self.parent.statusBar.showMessage("JSON overlay manager not available")
 
     def _connect_layout_signals(self):
         """Connect layout-related signals."""

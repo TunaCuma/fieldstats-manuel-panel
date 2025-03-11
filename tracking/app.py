@@ -1,4 +1,4 @@
-import tracker  # Your tracker module with the update function
+from .tracker import update
 
 
 def update_data(data):
@@ -9,6 +9,7 @@ def update_data(data):
         Dictionary expected to contain 'coord_id' and 'frame_id'.
 
     Returns:
+        {"lost_frame_id": lost_frame_id, "tracks": tracks, "lost_ids": lost_ids}
         dict: A dictionary containing the results of the update, or an error message.
     """
     if not data:
@@ -23,9 +24,9 @@ def update_data(data):
         return {"error": "Missing one or more required parameters: coord_id, frame_id"}
 
     try:
-        # Call the update function from tracker. It is assumed to return:
+        # Call the update function from  It is assumed to return:
         # (lost_frame_id, lost_ids, tracking_response)
-        lost_frame_id, lost_ids, tracking_response = tracker.update(frame_id, coord_id)
+        lost_frame_id, lost_ids, tracking_response = update(frame_id, coord_id)
     except Exception as e:
         return {"error": str(e)}
 

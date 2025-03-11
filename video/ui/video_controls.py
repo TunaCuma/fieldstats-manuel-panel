@@ -20,6 +20,7 @@ class VideoControls(QWidget):
     prevFrameClicked = pyqtSignal()
     sliderMoved = pyqtSignal(int)
     goToFrameRequested = pyqtSignal(int)
+    initTrackingClicked = pyqtSignal()  # Define signal at class level
 
     def __init__(self):
         super().__init__()
@@ -78,6 +79,10 @@ class VideoControls(QWidget):
         self.click_info_label = QLabel("Click on an overlay rectangle")
         self.click_info_label.setStyleSheet("font-weight: bold; color: orange;")
 
+        # Initialize tracking button
+        self.init_tracking_btn = QPushButton("Initialize Tracking")
+        self.init_tracking_btn.setFixedWidth(120)
+
         # Add all widgets to the single row layout
         self.layout.addWidget(self.current_frame_label)
         self.layout.addWidget(self.total_frames_label)
@@ -90,6 +95,7 @@ class VideoControls(QWidget):
         self.layout.addWidget(self.frame_input_label)
         self.layout.addWidget(self.frame_input)
         self.layout.addWidget(self.go_frame_btn)
+        self.layout.addWidget(self.init_tracking_btn)
         self.layout.addWidget(self.click_info_label)
 
         # Connect signals
@@ -100,6 +106,9 @@ class VideoControls(QWidget):
         self.next_frame_btn.clicked.connect(self.nextFrameClicked.emit)
         self.frame_input.returnPressed.connect(self.go_to_frame)
         self.go_frame_btn.clicked.connect(self.go_to_frame)
+        self.init_tracking_btn.clicked.connect(
+            self.initTrackingClicked.emit
+        )  # Use the class-level signal
 
         # Schedule focus to be set after the widget is fully initialized
         # This ensures the focus request is processed after widget is displayed
@@ -119,6 +128,36 @@ class VideoControls(QWidget):
         self.current_frame_label.setText(f"Current Frame: {current_frame}")
         self.total_frames_label.setText(f"Total Frames: {total_frames}")
         self.fps_label.setText(f"FPS: {fps:.2f}")
+
+    # Add to VideoPlayer class:
+    def init_tracking(self):
+        """Initialize tracking with IDs from 1 to 23."""
+        # Check if JSON overlay manager is available
+        if hasattr(self, "json_overlay_manager") and self.json_overlay_manager:
+            if hasattr(self.json_overlay_manager, "tracking_manager"):
+                # Set up tracking overlays
+                self.json_overlay_manager.tracking_manager.setup_overlays()
+
+                # Initialize with IDs
+                response = (
+                    self.json_overlay_manager.tracking_manager.initialize_with_ids(23)
+                )
+
+                # Show result in status bar
+                if "error" in response:
+                    self.statusBar.showMessage(f"Tracking error: {response['error']}")
+                else:
+                    lost_frame = response.get("lost_frame_id")
+                    if lost_frame:
+                        self.statusBar.showMessage(
+                            f"Tracking initialized. Lost frame found at: {lost_frame}"
+                        )
+                    else:
+                        self.statusBar.showMessage("Tracking initialized successfully")
+            else:
+                self.statusBar.showMessage("Tracking manager not available")
+        else:
+            self.statusBar.showMessage("JSON overlay manager not available")
 
     def update_position_slider(self, position, duration):
         """Update position slider value without triggering signals."""

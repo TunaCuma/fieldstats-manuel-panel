@@ -1,10 +1,9 @@
 import json
 
-import matplotlib.pyplot as plt  # For plotting
 import numpy as np
 import supervision as sv  # Includes ByteTrack implementation
 
-from tracking.transform_utility import reverse_transform_point, transform_point
+from .transform_utility import reverse_transform_point, transform_point
 
 CHUNK_LENGTH = 1800
 
