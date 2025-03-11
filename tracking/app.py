@@ -5,7 +5,8 @@ def update_data(data):
     """Processes the tracking update using the provided JSON-like dictionary.
 
     Parameters:
-        data (dict): Dictionary expected to contain 'coord_id' and 'frame_id'.
+        data (dict): {"frame_id":7200, "coords": [{"id":5, "c":[x,y], "src":0},...]}
+        Dictionary expected to contain 'coord_id' and 'frame_id'.
 
     Returns:
         dict: A dictionary containing the results of the update, or an error message.
