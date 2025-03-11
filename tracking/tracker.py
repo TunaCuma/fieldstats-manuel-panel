@@ -112,7 +112,7 @@ def perform_tracking_from_json(input_data, start_frame, start_map):
     frame_count = 0
     active_track_counts = []
     lost_tracker = [0] * 23
-    lost_array = []
+    lost_array = set()
     tracking_data = []
 
     for frame_data in input_data:
@@ -150,6 +150,7 @@ def perform_tracking_from_json(input_data, start_frame, start_map):
 
         tracked_objects = tracker.update_with_detections(detection_supervision)
         frame_tracking_data = {"frame_index": frame_index, "objects": []}
+        updated_tracks = set()
 
         for index, track in enumerate(tracked_objects):
             bbox = track[0].tolist()
@@ -203,6 +204,8 @@ def perform_tracking_from_json(input_data, start_frame, start_map):
                         "cls_id": class_id,
                         "active": True,
                     }
+                    updated_tracks.add(internal_id)
+
                 else:
                     continue
             else:
@@ -211,6 +214,8 @@ def perform_tracking_from_json(input_data, start_frame, start_map):
                 active_tracks[internal_id]["center"] = [center_x, center_y]
                 if class_id != active_tracks[internal_id]["cls_id"]:
                     active_tracks[internal_id]["active"] = False
+                else:
+                    updated_tracks.add(internal_id)
 
             frame_tracking_data["objects"].append(
                 {
@@ -221,6 +226,26 @@ def perform_tracking_from_json(input_data, start_frame, start_map):
                     "center": list(map(float, [center_x, center_y])),
                 }
             )
+
+        # Add interpolated detection for active tracks not updated in the current frame
+        for internal_id, data in active_tracks.items():
+            if data["active"] and internal_id not in updated_tracks:
+                center = data["center"]
+                bbox = [
+                    center[0] - 2.5,
+                    center[1] - 2.5,
+                    center[0] + 2.5,
+                    center[1] + 2.5,
+                ]
+                frame_tracking_data["objects"].append(
+                    {
+                        "track_id": int(internal_id),
+                        "class_id": int(data["cls_id"]),
+                        "confidence": 0.0,
+                        "bbox": bbox,
+                        "center": center,
+                    }
+                )
 
         # Manage lost tracks and update reusable ids
         for internal_id, data in list(active_tracks.items()):
@@ -246,17 +271,55 @@ def perform_tracking_from_json(input_data, start_frame, start_map):
                 lost_tracker[i] += 1
                 if lost_tracker[i] > 60:
                     print("Lost for 1 second, index=", i + 1, "at frame", frame_index)
-                    lost_array.append(i + 1)
+                    lost_array.add(i + 1)
             else:
                 lost_tracker[i] = 0
 
-        tracking_data.append(frame_tracking_data)
         if len(lost_array) > 0:
-            return frame_index, lost_array, tracking_data
+            # Iterate through all tracks in active_tracks
+            for internal_id, data in active_tracks.items():
+                if not data["active"]:
+                    # Use internal_id-1 as index for lost_tracker
+                    tracker_index = internal_id - 1
+                    # Check if the track has been lost for ≤ 60 frames
+                    if (
+                        tracker_index < len(lost_tracker)
+                        and lost_tracker[tracker_index] <= 60
+                    ):
+                        # Add interpolation entry only if not already in the final frame data
+                        if not any(
+                            d["track_id"] == internal_id
+                            for d in frame_tracking_data["objects"]
+                        ):
+                            center = data["center"]
+                            bbox = [
+                                center[0] - 2.5,
+                                center[1] - 2.5,
+                                center[0] + 2.5,
+                                center[1] + 2.5,
+                            ]
+                            frame_tracking_data["objects"].append(
+                                {
+                                    "track_id": int(internal_id),
+                                    "class_id": int(data["cls_id"]),
+                                    "confidence": 0.0,  # Interpolated detection
+                                    "bbox": bbox,
+                                    "center": center,
+                                }
+                            )
+                    else:
+                        # For tracks lost > 60 frames, ensure they are added to lost_array (if not already)
+                        if internal_id not in lost_array:
+                            lost_array.append(internal_id)
+
+            tracking_data.append(frame_tracking_data)
+            return frame_index, list(lost_array), tracking_data
+        else:
+            tracking_data.append(frame_tracking_data)
 
         current_active_count = sum(
             1 for track in active_tracks.values() if track["active"]
         )
         active_track_counts.append((frame_index, current_active_count))
 
-    return frame_index, lost_array, tracking_data
+    return frame_index, list(lost_array), tracking_data

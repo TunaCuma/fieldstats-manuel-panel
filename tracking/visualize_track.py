@@ -1,5 +1,4 @@
 import json
-import os
 import sys
 
 import cv2
@@ -20,7 +19,7 @@ def visualize_tracking_data(json_path, video_path=None, confidence_threshold=0.1
     """
     # Load tracking data from JSON
     with open(json_path) as json_file:
-        tracking_data = json.load(json_file)
+        tracking_data = json.load(json_file)["tracks"]
 
     # Known classes and assigned distinct colors
     known_classes = [0, 1, 2, 3]  # Replace with actual class IDs
@@ -37,7 +36,7 @@ def visualize_tracking_data(json_path, video_path=None, confidence_threshold=0.1
     ax.set_facecolor("black")
 
     # Frame index tracking
-    current_frame = {"index": 7200}
+    current_frame = {"index": 0}
 
     def update_plot():
         """Update the plot for the current frame."""
@@ -50,7 +49,9 @@ def visualize_tracking_data(json_path, video_path=None, confidence_threshold=0.1
         # Read video frame for overlay (if enabled)
         frame = None
         if cap:
-            cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)  # Set video to current frame
+            cap.set(
+                cv2.CAP_PROP_POS_FRAMES, frame_idx + 7372
+            )  # Set video to current frame
             ret, frame = cap.read()
             if not ret:
                 print("Failed to read video frame.")
@@ -167,7 +168,7 @@ def visualize_tracking_data(json_path, video_path=None, confidence_threshold=0.1
         "Frame",
         0,
         (min(total_frames, len(tracking_data))) - 1,
-        valinit=7200,
+        valinit=0,
         valstep=1,
     )
     slider.on_changed(on_slider_change)
@@ -191,7 +192,7 @@ if __name__ == "__main__":
     videoname = sys.argv[2]
     confidence_threshold = float(sys.argv[3]) if len(sys.argv) > 3 else 0
 
-    json_path = os.path.join("json_output", jsonname)
-    video_path = os.path.join("input_videos", videoname)
+    json_path = jsonname  # os.path.join("json_output", jsonname)
+    video_path = videoname  # os.path.join("input_videos", videoname)
 
     visualize_tracking_data(json_path, video_path, confidence_threshold)
