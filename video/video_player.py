@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from typing_extensions import override
 
 from .handlers.media_handler import MediaHandler
 from .handlers.menu_handler import MenuHandler
@@ -53,7 +54,7 @@ class VideoPlayer(QMainWindow):
 
         # Setup timer for UI updates
         self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_ui)
+        self.timer.timeout.connect(self._update_ui)
         self.timer.start(100)
 
     def _setup_main_layout(self):
@@ -131,7 +132,7 @@ class VideoPlayer(QMainWindow):
             self.view_handler.handle_view_resized,
         )
 
-    def update_ui(self):
+    def _update_ui(self):
         """Update UI periodically."""
         # Delegate to playback controller
         self.playback_controller.update_ui()
@@ -140,14 +141,15 @@ class VideoPlayer(QMainWindow):
         # code
         self.prop_bridge.sync_properties()
 
+    def load_videos(self, transform_path, left_path, right_path):
+        """Load all three videos and synchronize them."""
+        self.media_handler.load_videos(transform_path, left_path, right_path)
+
+    @override
     def resizeEvent(self, event):
         """Handle window resize events."""
         super().resizeEvent(event)
         self.view_handler.handle_view_resized()
-
-    def load_videos(self, transform_path, left_path, right_path):
-        """Load all three videos and synchronize them."""
-        self.media_handler.load_videos(transform_path, left_path, right_path)
 
     # Property proxies - forward to property bridge
     @property
