@@ -73,8 +73,9 @@ class PlaybackController:
                     self.current_frame, self.total_frames, self.fps
                 )
         except Exception:
+            print("Error updating UI")
+            print(Exception)
             # Silently handle any errors during UI update
-            pass
 
     def handle_playback_state_changed(self, state):
         """Handle playback state changes."""
