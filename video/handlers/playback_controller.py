@@ -1,3 +1,4 @@
+from PyQt6.QtCore import QTimer
 from PyQt6.QtMultimedia import QMediaPlayer
 
 
@@ -105,6 +106,13 @@ class PlaybackController:
             self.controls.update_frame_info(
                 self.current_frame, self.total_frames, self.fps
             )
+
+            # Explicitly force overlay update after position change
+            # This ensures overlays are updated after the position change is processed
+            QTimer.singleShot(
+                50, lambda: self.main_player.positionChanged.emit(position)
+            )
+
             self.status_bar.showMessage(f"Moved to frame {frame_num}")
         else:
             self.status_bar.showMessage(
